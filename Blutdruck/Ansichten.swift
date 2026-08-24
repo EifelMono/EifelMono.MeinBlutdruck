@@ -646,19 +646,32 @@ struct Tagesabschnitte: View {
 
             if aufteilung == .abschnitte {
                 VStack(spacing: 6) {
+                    HStack {
+                        Text("Abschnitt").frame(maxWidth: .infinity, alignment: .leading)
+                        Text("Messungen").frame(width: 72, alignment: .trailing)
+                        Text("Ø mmHg").frame(width: 66, alignment: .trailing)
+                        Text("über \(Int(grenzeSys))/\(Int(grenzeDia))")
+                            .frame(width: 66, alignment: .trailing)
+                    }
+                    .font(.caption2).foregroundStyle(.secondary).textCase(.uppercase)
+
                     ForEach(werte) { w in
                         HStack {
                             Text(w.name).font(.subheadline.weight(.medium))
                             Text(w.spanne).font(.caption).foregroundStyle(.secondary)
                             Spacer()
-                            Text("\(w.anzahl)").font(.caption).foregroundStyle(.secondary).frame(width: 34)
-                            Text("\(Int(w.sys.rounded()))/\(Int(w.dia.rounded()))")
+                            Text("\(w.anzahl)").font(.caption).foregroundStyle(.secondary)
+                                .frame(width: 72, alignment: .trailing)
+                            // Bewertung nach den angezeigten, gerundeten Werten – sonst
+                            // widersprechen sich Zahl und Farbe bei 84,5 gegenüber 85.
+                            let zSys = w.sys.rounded(), zDia = w.dia.rounded()
+                            Text("\(Int(zSys))/\(Int(zDia))")
                                 .font(.subheadline.monospacedDigit())
+                                .foregroundStyle(Bewertung.fuer(sys: zSys, dia: zDia).farbe)
                                 .frame(width: 66, alignment: .trailing)
                             Text("\(Int((Double(w.ueberGrenze) / Double(w.anzahl) * 100).rounded())) %")
-                                .font(.caption.monospacedDigit())
-                                .foregroundStyle(Bewertung.fuer(sys: w.sys, dia: w.dia).farbe)
-                                .frame(width: 46, alignment: .trailing)
+                                .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
+                                .frame(width: 66, alignment: .trailing)
                         }
                     }
                 }
