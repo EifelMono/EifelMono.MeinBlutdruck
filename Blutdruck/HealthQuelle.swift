@@ -86,7 +86,7 @@ final class Speicher: ObservableObject {
                   let letzteMessung = systolisch.last?.startDate else {
                 messungen = []
                 gelesen = (systolisch.count, diastolisch.count, 0)
-                meldung = "Health liefert keine Blutdruckwerte zurück.\n\nEntweder stehen dort noch keine, oder der Lesezugriff ist nicht erlaubt: Health-App → Profilbild → Apps und Dienste → Blutdruck → alles einschalten."
+                meldung = "Health liefert keine Blutdruckwerte zurück.\n\nEntweder stehen dort noch keine, oder der Lesezugriff ist nicht erlaubt: Health-App → Profilbild → Apps und Dienste → Mein Blutdruck → alles einschalten."
                 return
             }
 

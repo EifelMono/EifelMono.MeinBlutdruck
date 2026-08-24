@@ -203,23 +203,33 @@ struct Leerzustand: View {
             }
             .padding(10)
             .background(.background.secondary, in: RoundedRectangle(cornerRadius: 10))
-            Button("Erneut aus Health laden") { Task { await speicher.laden() } }
-                .buttonStyle(.borderedProminent)
+            // Kommt nichts an, liegt es fast immer an der Freigabe – dann führt der
+            // Weg in die Health-App, und das Neuladen tritt zurück.
+            let nichtsGelesen = speicher.gelesen.sys == 0
+
+            Button {
+                Ziele.oeffnen(Ziele.healthDatenzugriff)
+            } label: {
+                Label("Health-Einstellungen öffnen", systemImage: "heart.text.square")
+                    .frame(maxWidth: nichtsGelesen ? .infinity : nil)
+            }
+            .buttonStyle(nichtsGelesen ? AnyButtonStyle(.borderedProminent)
+                                       : AnyButtonStyle(.bordered))
+            .controlSize(nichtsGelesen ? .large : .regular)
 
             HStack(spacing: 10) {
-                Button {
-                    Ziele.oeffnen(Ziele.healthDatenzugriff)
-                } label: {
-                    Label("Health-Einstellungen", systemImage: "heart.text.square")
-                }
+                Button("Erneut aus Health laden") { Task { await speicher.laden() } }
+                    .buttonStyle(nichtsGelesen ? AnyButtonStyle(.bordered)
+                                               : AnyButtonStyle(.borderedProminent))
+                    .disabled(speicher.laedt)
                 Button {
                     Ziele.oeffnen([UIApplication.openSettingsURLString])
                 } label: {
-                    Label("App-Einstellungen", systemImage: "gearshape")
+                    Label("App", systemImage: "gearshape")
                 }
+                .buttonStyle(.bordered)
             }
             .font(.footnote)
-            .buttonStyle(.bordered)
 
             Text("In der Health-App: Profilbild → Apps und Dienste → Mein Blutdruck. Weiter darf keine App führen.")
                 .font(.caption2).foregroundStyle(.secondary)
@@ -1177,4 +1187,14 @@ enum Ziele {
         }
         naechstes()
     }
+}
+
+
+/// Erlaubt es, zwischen zwei Knopfstilen umzuschalten.
+struct AnyButtonStyle: PrimitiveButtonStyle {
+    private let bauen: (Configuration) -> AnyView
+    init<S: PrimitiveButtonStyle>(_ stil: S) {
+        bauen = { AnyView(Button($0).buttonStyle(stil)) }
+    }
+    func makeBody(configuration: Configuration) -> some View { bauen(configuration) }
 }
