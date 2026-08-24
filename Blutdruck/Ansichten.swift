@@ -1071,44 +1071,6 @@ struct Einstellungen: View {
                 }
 
                 Section {
-                    DisclosureGroup("Letzte Schritte") {
-                        if speicher.protokoll.isEmpty {
-                            Text("noch nichts aufgezeichnet")
-                                .font(.caption).foregroundStyle(.secondary)
-                        } else {
-                            ForEach(speicher.protokoll.suffix(20), id: \.self) { zeile in
-                                Text(zeile)
-                                    .font(.system(size: 11, design: .monospaced))
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                    .font(.subheadline)
-
-                    Button {
-                        UIPasteboard.general.string = bericht
-                        withAnimation { kopiert = true }
-                        Task {
-                            try? await Task.sleep(for: .seconds(2))
-                            withAnimation { kopiert = false }
-                        }
-                    } label: {
-                        Label(kopiert ? "Kopiert" : "Protokoll kopieren",
-                              systemImage: kopiert ? "checkmark" : "doc.on.doc")
-                    }
-                    .disabled(speicher.protokoll.isEmpty)
-
-                    ShareLink(item: bericht) {
-                        Label("Protokoll senden", systemImage: "square.and.arrow.up")
-                    }
-                    .disabled(speicher.protokoll.isEmpty)
-                } header: {
-                    Text("Diagnose")
-                } footer: {
-                    Text("Enthält nur den Ablauf der Health-Abfrage mit Uhrzeit und die Zahl der gelesenen Werte – keine Messwerte selbst.")
-                }
-
-                Section {
                     Toggle("Beim Öffnen sperren", isOn: $schutz.aktiv)
                 } header: {
                     Text("Schutz")
@@ -1162,6 +1124,45 @@ struct Einstellungen: View {
                     Text("Welcher Wert für dich gilt, entscheidet die behandelnde Praxis. Die Vorschläge sind allgemeine Bezugswerte, keine ärztliche Empfehlung.")
                         .font(.caption2).foregroundStyle(.secondary)
                 }
+
+                Section {
+                    DisclosureGroup("Letzte Schritte") {
+                        if speicher.protokoll.isEmpty {
+                            Text("noch nichts aufgezeichnet")
+                                .font(.caption).foregroundStyle(.secondary)
+                        } else {
+                            ForEach(speicher.protokoll.suffix(20), id: \.self) { zeile in
+                                Text(zeile)
+                                    .font(.system(size: 11, design: .monospaced))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    .font(.subheadline)
+
+                    Button {
+                        UIPasteboard.general.string = bericht
+                        withAnimation { kopiert = true }
+                        Task {
+                            try? await Task.sleep(for: .seconds(2))
+                            withAnimation { kopiert = false }
+                        }
+                    } label: {
+                        Label(kopiert ? "Kopiert" : "Protokoll kopieren",
+                              systemImage: kopiert ? "checkmark" : "doc.on.doc")
+                    }
+                    .disabled(speicher.protokoll.isEmpty)
+
+                    ShareLink(item: bericht) {
+                        Label("Protokoll senden", systemImage: "square.and.arrow.up")
+                    }
+                    .disabled(speicher.protokoll.isEmpty)
+                } header: {
+                    Text("Diagnose")
+                } footer: {
+                    Text("Enthält nur den Ablauf der Health-Abfrage mit Uhrzeit und die Zahl der gelesenen Werte – keine Messwerte selbst.")
+                }
+
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
