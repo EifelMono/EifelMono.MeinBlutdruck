@@ -98,7 +98,7 @@ struct Uebersicht: View {
                 .animation(.easeInOut(duration: 0.2), value: geblaettert)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
-                        // Beide Richtungen immer erreichbar – am Ende genauso wie am Anfang.
+                        // Nur wenn es etwas zu blättern gibt.
                         HStack(spacing: 2) {
                             Button {
                                 withAnimation { blaettern.scrollTo("oben", anchor: .top) }
@@ -110,6 +110,8 @@ struct Uebersicht: View {
                             } label: { Image(systemName: "arrow.down.to.line") }
                                 .accessibilityLabel("Ans Ende springen")
                         }
+                        .opacity(speicher.messungen.isEmpty ? 0 : 1)
+                        .disabled(speicher.messungen.isEmpty)
                     }
                     ToolbarItem(placement: .topBarLeading) {
                         Button { einstellungen = true } label: { Image(systemName: "gearshape") }
@@ -183,51 +185,58 @@ struct Zeitraumleiste: View {
 
 struct Leerzustand: View {
     @EnvironmentObject var speicher: Speicher
-    var body: some View {
-        VStack(spacing: 14) {
-            PulsendesLogo()
-            Text("Noch keine Messwerte").font(.title3.bold())
-            Text(speicher.meldung.isEmpty
-                 ? "Die App wertet Blutdruck und Puls aus der Health-App aus – dazu Gewicht und Körperfett, um zu sehen, wie sie zusammenhängen."
-                 : speicher.meldung)
-                .font(.callout).foregroundStyle(.secondary).multilineTextAlignment(.center)
-            VStack(spacing: 2) {
-                Text("Aus Health gelesen").font(.caption2.weight(.semibold))
-                    .foregroundStyle(.secondary).textCase(.uppercase)
-                Text("systolisch \(speicher.gelesen.sys) · diastolisch \(speicher.gelesen.dia)")
-                    .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
-                if speicher.gelesen.sys == 0 {
-                    Text("Null heißt: keine Freigabe oder noch keine Werte vorhanden.")
-                        .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
-                }
-            }
-            .padding(10)
-            .background(.background.secondary, in: RoundedRectangle(cornerRadius: 10))
-            // Kommt nichts an, liegt es fast immer an der Freigabe – dann führt der
-            // Weg in die Health-App, und das Neuladen tritt zurück.
-            let nichtsGelesen = speicher.gelesen.sys == 0
 
-            Button {
-                Ziele.oeffnen(Ziele.healthDatenzugriff)
-            } label: {
-                Label("Health-Einstellungen öffnen", systemImage: "heart.text.square")
-                    .frame(maxWidth: nichtsGelesen ? .infinity : nil)
+    var body: some View {
+        let nichtsGelesen = speicher.gelesen.sys == 0
+
+        VStack(spacing: 18) {
+            PulsendesLogo()
+
+            VStack(spacing: 6) {
+                Text("Noch keine Messwerte").font(.title3.bold())
+                Text(speicher.meldung.isEmpty
+                     ? "Die App wertet Blutdruck und Puls aus der Health-App aus – dazu Gewicht und Körperfett."
+                     : speicher.meldung)
+                    .font(.callout).foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
             }
-            .buttonStyle(nichtsGelesen ? AnyButtonStyle(.borderedProminent)
-                                       : AnyButtonStyle(.bordered))
-            .controlSize(nichtsGelesen ? .large : .regular)
+
+            // Der Weg zur Freigabe: Knopf und Erklärung gehören zusammen.
+            VStack(spacing: 10) {
+                Button {
+                    Ziele.oeffnen(Ziele.healthDatenzugriff)
+                } label: {
+                    Label("Health-Einstellungen öffnen", systemImage: "heart.text.square")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+
+                Text("Dort auf dein Profilbild tippen, dann „Apps und Dienste“, dann „Mein Blutdruck“ – und alles einschalten. Diesen letzten Schritt kann dir keine App abnehmen.")
+                    .font(.caption).foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .padding(14)
+            .background(.background.secondary, in: RoundedRectangle(cornerRadius: 14))
 
             Button("Erneut aus Health laden") { Task { await speicher.laden() } }
-                .buttonStyle(nichtsGelesen ? AnyButtonStyle(.bordered)
-                                           : AnyButtonStyle(.borderedProminent))
+                .buttonStyle(.bordered)
                 .disabled(speicher.laedt)
                 .font(.footnote)
 
-            Text("Den letzten Schritt musst du selbst tippen: in der Health-App auf dein Profilbild, dann „Apps und Dienste“, dann „Mein Blutdruck“ – dort alles einschalten.")
-                .font(.caption2).foregroundStyle(.secondary)
-                .multilineTextAlignment(.center).padding(.horizontal, 12)
+            if nichtsGelesen {
+                VStack(spacing: 2) {
+                    Text("Aus Health gelesen").font(.caption2.weight(.semibold))
+                        .foregroundStyle(.tertiary).textCase(.uppercase)
+                    Text("systolisch \(speicher.gelesen.sys) · diastolisch \(speicher.gelesen.dia)")
+                        .font(.caption2.monospacedDigit()).foregroundStyle(.tertiary)
+                }
+                .padding(.top, 4)
+            }
         }
-        .frame(maxWidth: .infinity).padding(.vertical, 40)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 30)
     }
 }
 
