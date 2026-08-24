@@ -2,7 +2,13 @@ import SwiftUI
 
 /// Klarstellung, was diese App ist – und was sie ausdrücklich nicht ist.
 enum Haftung {
-    static let kurz = "Kein Medizinprodukt. Keine Diagnose, keine Behandlungsempfehlung."
+    static let kurz = "Kein Medizinprodukt. Diagnostiziert, behandelt und heilt nichts."
+
+    /// Der Kernsatz, gut sichtbar über allem anderen.
+    static let kernsatz = """
+    Diese App diagnostiziert, behandelt oder heilt keine Erkrankung. \
+    Frage bei allem, was deine Gesundheit betrifft, immer eine Ärztin oder einen Arzt.
+    """
 
     static let lang = """
     Diese App ist **kein Medizinprodukt** und nicht als solches geprüft oder zugelassen.
@@ -39,6 +45,16 @@ struct Haftungshinweis: View {
                 VStack(alignment: .leading, spacing: 16) {
                     Label("Bitte einmal lesen", systemImage: "exclamationmark.triangle.fill")
                         .font(.headline).foregroundStyle(Color.statusErhoeht)
+
+                    Text(Haftung.kernsatz)
+                        .font(.callout.weight(.medium))
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(12)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.statusErhoeht.opacity(0.10),
+                                    in: RoundedRectangle(cornerRadius: 10))
+                        .overlay(RoundedRectangle(cornerRadius: 10)
+                            .strokeBorder(Color.statusErhoeht.opacity(0.35)))
                     Text(.init(Haftung.lang))
                         .font(.callout)
                         .fixedSize(horizontal: false, vertical: true)
