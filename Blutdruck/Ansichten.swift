@@ -221,7 +221,7 @@ struct Leerzustand: View {
             .font(.footnote)
             .buttonStyle(.bordered)
 
-            Text("Führt so weit wie iOS es zulässt – den letzten Schritt zu „Mein Blutdruck“ musst du dort selbst tippen.")
+            Text("In der Health-App: Profilbild → Apps und Dienste → Mein Blutdruck. Weiter darf keine App führen.")
                 .font(.caption2).foregroundStyle(.secondary)
                 .multilineTextAlignment(.center).padding(.horizontal, 12)
         }
@@ -1154,12 +1154,11 @@ struct Kopfzeile: View {
 /// Öffnet das erste Ziel, das iOS annimmt. Manche Adressen in die Systemeinstellungen
 /// sind nicht dokumentiert und können jederzeit wegfallen – deshalb die Kette mit Rückfall.
 enum Ziele {
+    // Bewusst ohne "App-prefs:" und "prefs:root=": das sind private Schnittstellen,
+    // die bei der App-Prüfung zur Ablehnung führen.
     static let healthDatenzugriff = [
-        "x-apple-health://sources",          // Quellenliste in der Health-App
-        "App-prefs:HEALTH",                  // Einstellungen → Health
-        "prefs:root=HEALTH",
-        "x-apple-health://",                 // Health-App allgemein
-        UIApplication.openSettingsURLString  // zuletzt: Einstellungen der App
+        "x-apple-health://",                 // Health-App
+        UIApplication.openSettingsURLString  // sonst: Einstellungen der App
     ]
 
     static func oeffnen(_ adressen: [String]) {
