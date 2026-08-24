@@ -217,19 +217,11 @@ struct Leerzustand: View {
                                        : AnyButtonStyle(.bordered))
             .controlSize(nichtsGelesen ? .large : .regular)
 
-            HStack(spacing: 10) {
-                Button("Erneut aus Health laden") { Task { await speicher.laden() } }
-                    .buttonStyle(nichtsGelesen ? AnyButtonStyle(.bordered)
-                                               : AnyButtonStyle(.borderedProminent))
-                    .disabled(speicher.laedt)
-                Button {
-                    Ziele.oeffnen([UIApplication.openSettingsURLString])
-                } label: {
-                    Label("App", systemImage: "gearshape")
-                }
-                .buttonStyle(.bordered)
-            }
-            .font(.footnote)
+            Button("Erneut aus Health laden") { Task { await speicher.laden() } }
+                .buttonStyle(nichtsGelesen ? AnyButtonStyle(.bordered)
+                                           : AnyButtonStyle(.borderedProminent))
+                .disabled(speicher.laedt)
+                .font(.footnote)
 
             Text("Den letzten Schritt musst du selbst tippen: in der Health-App auf dein Profilbild, dann „Apps und Dienste“, dann „Mein Blutdruck“ – dort alles einschalten.")
                 .font(.caption2).foregroundStyle(.secondary)
