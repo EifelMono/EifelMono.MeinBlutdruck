@@ -75,7 +75,7 @@ struct Abdeckung: View {
                     .overlay(RoundedRectangle(cornerRadius: 19, style: .continuous)
                         .strokeBorder(.white.opacity(0.5)))
                     .shadow(color: .black.opacity(0.12), radius: 10, y: 4)
-                Text("Blutdruck").font(.title3.weight(.semibold))
+                Text("Mein Blutdruck").font(.title3.weight(.semibold))
                 Label("geschützt", systemImage: "lock.fill")
                     .font(.footnote).foregroundStyle(.secondary)
             }
@@ -91,7 +91,7 @@ struct Sperrbildschirm: View {
             Schutzhintergrund()
             VStack(spacing: 16) {
                 PulsendesLogo()
-                Text("Blutdruck").font(.title2.weight(.semibold))
+                Text("Mein Blutdruck").font(.title2.weight(.semibold))
                 Text("Deine Werte sind geschützt und werden erst nach dem Entsperren angezeigt.")
                     .font(.callout).foregroundStyle(.secondary)
                     .multilineTextAlignment(.center).padding(.horizontal, 24)

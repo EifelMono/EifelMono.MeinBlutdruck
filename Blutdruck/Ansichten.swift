@@ -66,7 +66,9 @@ struct Uebersicht: View {
                                         gewaehlt: $gewaehlt)
                             PulsProfil(werte: speicher.pulsReihe, hinweis: speicher.pulsHinweis)
                             Tagesabschnitte(punkte: punkte, aufteilung: $aufteilung)
-                            Verlauf(punkte: punkte, gewicht: imZeitraum(speicher.gewicht),
+                            Verlauf(punkte: punkte,
+                                    puls: Auswertung.proTag(speicher.pulsReihe),
+                                    gewicht: imZeitraum(speicher.gewicht),
                                     fett: imZeitraum(speicher.koerperfett))
                             Koerperwerte(gewicht: imZeitraum(speicher.gewicht),
                                          fett: imZeitraum(speicher.koerperfett))
@@ -112,7 +114,7 @@ struct Uebersicht: View {
                     }
                 }
             }
-            .navigationTitle("Blutdruck")
+            .navigationTitle("Mein Blutdruck")
             .overlay { if speicher.laedt { ProgressView().controlSize(.large) } }
             .sheet(isPresented: $einstellungen) { Einstellungen() }
             .sheet(isPresented: $hinweisZeigen) { Haftungshinweis(erstmalig: !hinweisBestaetigt) }
@@ -696,8 +698,24 @@ struct Tagesabschnitte: View {
 
 struct Verlauf: View {
     let punkte: [Messung]
+    let puls: [Wert]
     let gewicht: [Wert]
     let fett: [Wert]
+
+    private struct Reihe {
+        let name: String, einheit: String, schritt: Double
+        let farbe: Color, werte: [Wert]
+    }
+    private var nebenreihen: [Reihe] {
+        var r: [Reihe] = []
+        if puls.count > 1 { r.append(.init(name: "Puls", einheit: "bpm", schritt: 5,
+                                           farbe: .pulsFarbe, werte: puls)) }
+        if gewicht.count > 1 { r.append(.init(name: "Gewicht", einheit: "kg", schritt: 1,
+                                              farbe: .gewichtFarbe, werte: gewicht)) }
+        if fett.count > 1 { r.append(.init(name: "Körperfett", einheit: "%", schritt: 0.5,
+                                           farbe: .fettFarbe, werte: fett)) }
+        return r
+    }
 
     private var spanne: ClosedRange<Date>? {
         guard let a = punkte.map(\.datum).min(), let b = punkte.map(\.datum).max(), a < b else { return nil }
@@ -705,8 +723,7 @@ struct Verlauf: View {
     }
 
     var body: some View {
-        Karte(titel: "Verlauf über alle Tage",
-              unterzeile: "Gleiche Zeitachse – so ist zu sehen, ob Gewicht und Blutdruck zusammen wandern") {
+        Karte(titel: "Verlauf über alle Tage") {
             Chart {
                 ForEach([grenzeSys, grenzeDia], id: \.self) { g in
                     RuleMark(y: .value("Grenzwert", g))
@@ -722,20 +739,18 @@ struct Verlauf: View {
             }
             .chartYScale(domain: achsenBereich(punkte.flatMap { [$0.sys, $0.dia] } + [grenzeSys, grenzeDia]))
             .modifier(GleicheZeitachse(spanne: spanne))
+            .chartXAxis { AxisMarks { AxisGridLine() } }   // Datum steht nur unter dem letzten Verlauf
             .chartLegend(.hidden)
             .frame(height: 190)
 
-            if !gewicht.isEmpty {
-                Nebenverlauf(werte: gewicht, farbe: .gewichtFarbe, name: "Gewicht",
-                             einheit: "kg", schritt: 1, spanne: spanne)
+            ForEach(Array(nebenreihen.enumerated()), id: \.element.name) { i, reihe in
+                Nebenverlauf(werte: reihe.werte, farbe: reihe.farbe, name: reihe.name,
+                             einheit: reihe.einheit, schritt: reihe.schritt, spanne: spanne,
+                             mitDatum: i == nebenreihen.count - 1)
             }
-            if !fett.isEmpty {
-                Nebenverlauf(werte: fett, farbe: .fettFarbe, name: "Körperfett",
-                             einheit: "%", schritt: 0.5, spanne: spanne)
-            }
+
             Legende(eintraege: [("Systolisch", .sysFarbe), ("Diastolisch", .diaFarbe)]
-                    + (gewicht.isEmpty ? [] : [("Gewicht", .gewichtFarbe)])
-                    + (fett.isEmpty ? [] : [("Körperfett", .fettFarbe)]))
+                    + nebenreihen.map { ($0.name, $0.farbe) })
         }
     }
 }
@@ -748,6 +763,7 @@ struct Nebenverlauf: View {
     let einheit: String
     let schritt: Double
     let spanne: ClosedRange<Date>?
+    var mitDatum = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
@@ -762,9 +778,17 @@ struct Nebenverlauf: View {
             }
             .chartYScale(domain: achsenBereich(werte.map(\.wert), schritt: schritt))
             .modifier(GleicheZeitachse(spanne: spanne))
+            .modifier(DatumsAchse(zeigen: mitDatum))
             .chartLegend(.hidden)
             .frame(height: 84)
         }
+    }
+}
+
+struct DatumsAchse: ViewModifier {
+    let zeigen: Bool
+    func body(content: Content) -> some View {
+        if zeigen { content } else { content.chartXAxis { AxisMarks { AxisGridLine() } } }
     }
 }
 

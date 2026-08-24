@@ -104,6 +104,15 @@ enum Auswertung {
         }
     }
 
+    /// Tagesmittel einer Wertreihe – für die schmalen Verläufe unter dem Blutdruck.
+    static func proTag(_ werte: [Wert]) -> [Wert] {
+        let kal = Calendar.current
+        let gruppen = Dictionary(grouping: werte) { kal.startOfDay(for: $0.datum) }
+        return gruppen.keys.sorted().map { tag in
+            Wert(datum: tag, wert: (mittel(gruppen[tag]!.map(\.wert)) ?? 0).rounded())
+        }
+    }
+
     // MARK: Zeitraum
 
     /// Frei gewählter Abschnitt – von Tagesbeginn bis Tagesende.
