@@ -188,7 +188,8 @@ struct Uebersicht: View {
                                       puls: speicher.pulsBand,
                                       gewicht: imZeitraum(speicher.gewicht),
                                       fett: imZeitraum(speicher.koerperfett),
-                                      zeitraum: zeitraumText)
+                                      zeitraum: zeitraumText,
+                                      darstellung: darstellung)
             pdfLaeuft = false
         }
     }

@@ -9,11 +9,18 @@ enum PDFBericht {
 
     @MainActor
     static func erzeugen(messungen: [Messung], punkte: [Messung], puls: [Bandwert],
-                         gewicht: [Wert], fett: [Wert], zeitraum: String) -> URL? {
+                         gewicht: [Wert], fett: [Wert], zeitraum: String,
+                         darstellung: Darstellung) -> URL? {
+        // Der Bericht folgt den Einstellungen – das steht im Kopf, damit später
+        // nachvollziehbar bleibt, wie die Zahlen zustande kamen.
+        let einstellung = "\(darstellung.rawValue) · erhöht ab \(Int(grenzeSys))/\(Int(grenzeDia)) mmHg"
+            + " · Messreihe bis \(Int(Auswertung.fensterMinuten)) min Abstand, Ausreißer ab ±\(Int(Auswertung.toleranz)) mmHg"
         let seiten: [AnyView] = [
             AnyView(SeiteEins(messungen: messungen, punkte: punkte, puls: puls,
-                              gewicht: gewicht, fett: fett, zeitraum: zeitraum)),
-            AnyView(SeiteZwei(tage: Auswertung.proTag(messungen), zeitraum: zeitraum)),
+                              gewicht: gewicht, fett: fett, zeitraum: zeitraum,
+                              einstellung: einstellung)),
+            AnyView(SeiteZwei(tage: Auswertung.proTag(messungen), zeitraum: zeitraum,
+                              einstellung: einstellung)),
         ]
 
         let ordner = FileManager.default.temporaryDirectory
@@ -44,6 +51,7 @@ private struct SeiteEins: View {
     let gewicht: [Wert]
     let fett: [Wert]
     let zeitraum: String
+    let einstellung: String
 
     var body: some View {
         let gueltig = messungen.filter { !$0.ausreisser }
@@ -53,7 +61,7 @@ private struct SeiteEins: View {
         let bewertung = Bewertung.fuer(sys: sys, dia: dia)
 
         VStack(alignment: .leading, spacing: 16) {
-            Kopf(zeitraum: zeitraum, seite: 1)
+            Kopf(zeitraum: zeitraum, einstellung: einstellung, seite: 1)
 
             HStack(spacing: 10) {
                 Feld(titel: "Ø Blutdruck", wert: "\(Int(sys.rounded()))/\(Int(dia.rounded()))",
@@ -160,10 +168,11 @@ private struct SeiteEins: View {
 private struct SeiteZwei: View {
     let tage: [Messung]
     let zeitraum: String
+    let einstellung: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Kopf(zeitraum: zeitraum, seite: 2)
+            Kopf(zeitraum: zeitraum, einstellung: einstellung, seite: 2)
             Ueberschrift("Mittelwerte je Tag")
 
             HStack {
@@ -209,12 +218,14 @@ private struct SeiteZwei: View {
 
 private struct Kopf: View {
     let zeitraum: String
+    let einstellung: String
     let seite: Int
     var body: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Blutdruck-Bericht").font(.system(size: 20, weight: .semibold))
                 Text(zeitraum).font(.system(size: 10)).foregroundStyle(.secondary)
+                Text(einstellung).font(.system(size: 7.5)).foregroundStyle(.secondary)
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 2) {
