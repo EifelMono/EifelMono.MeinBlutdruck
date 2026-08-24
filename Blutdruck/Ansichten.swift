@@ -114,7 +114,7 @@ struct Uebersicht: View {
                     }
                 }
             }
-            .navigationTitle("Mein Blutdruck")
+            .navigationTitle("Mein Blutdruck (und mehr)")
             .overlay { if speicher.laedt { ProgressView().controlSize(.large) } }
             .sheet(isPresented: $einstellungen) { Einstellungen() }
             .sheet(isPresented: $hinweisZeigen) { Haftungshinweis(erstmalig: !hinweisBestaetigt) }
@@ -717,6 +717,30 @@ struct Verlauf: View {
         return r
     }
 
+    struct Trendpunkt: Identifiable {
+        let id = UUID(); let serie: String; let datum: Date; let wert: Double; let farbe: Color
+    }
+
+    /// Geglättete Verlaufskurven für systolisch und diastolisch über die Tage.
+    private var trend: [Trendpunkt] {
+        guard let s = spanne else { return [] }
+        let von = s.lowerBound.timeIntervalSince1970, bis = s.upperBound.timeIntervalSince1970
+        guard bis > von else { return [] }
+        let breite = max(43200, (bis - von) / 14)
+        var alle: [Trendpunkt] = []
+        for (name, pfad, farbe) in [("sys", \Messung.sys, Color.sysFarbe),
+                                    ("dia", \Messung.dia, Color.diaFarbe)] {
+            let roh = punkte.map { (x: $0.datum.timeIntervalSince1970, y: $0[keyPath: pfad]) }
+            for (i, stueck) in Auswertung.kurve(roh, von: von, bis: bis, breite: breite).enumerated() {
+                alle += stueck.map {
+                    Trendpunkt(serie: "\(name)\(i)", datum: Date(timeIntervalSince1970: $0.x),
+                               wert: $0.wert, farbe: farbe)
+                }
+            }
+        }
+        return alle
+    }
+
     private var spanne: ClosedRange<Date>? {
         guard let a = punkte.map(\.datum).min(), let b = punkte.map(\.datum).max(), a < b else { return nil }
         return a...b
@@ -732,9 +756,15 @@ struct Verlauf: View {
                 }
                 ForEach(punkte) { m in
                     PointMark(x: .value("Tag", m.datum), y: .value("mmHg", m.sys))
-                        .foregroundStyle(Color.sysFarbe).symbolSize(32)
+                        .foregroundStyle(Color.sysFarbe.opacity(0.55)).symbolSize(26)
                     PointMark(x: .value("Tag", m.datum), y: .value("mmHg", m.dia))
-                        .foregroundStyle(Color.diaFarbe).symbolSize(32)
+                        .foregroundStyle(Color.diaFarbe.opacity(0.55)).symbolSize(26)
+                }
+                ForEach(trend) { t in
+                    LineMark(x: .value("Tag", t.datum), y: .value("mmHg", t.wert),
+                             series: .value("Kurve", t.serie))
+                        .foregroundStyle(t.farbe)
+                        .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
                 }
             }
             .chartYScale(domain: achsenBereich(punkte.flatMap { [$0.sys, $0.dia] } + [grenzeSys, grenzeDia]))
