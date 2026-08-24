@@ -196,7 +196,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = B66T4RV9WF;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Mein Blutdruck";
@@ -204,7 +204,7 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Zum Auswerten deiner Blutdruckmessungen liest die App sie aus der Health-App.";
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				MARKETING_VERSION = 4.9;
+				MARKETING_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.klapperich.blutdruck;
 				PRODUCT_NAME = "Mein Blutdruck";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -223,7 +223,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 41;
 				DEVELOPMENT_TEAM = B66T4RV9WF;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Mein Blutdruck";
@@ -231,7 +231,7 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Zum Auswerten deiner Blutdruckmessungen liest die App sie aus der Health-App.";
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				MARKETING_VERSION = 4.9;
+				MARKETING_VERSION = 5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.klapperich.blutdruck;
 				PRODUCT_NAME = "Mein Blutdruck";
 				SWIFT_EMIT_LOC_STRINGS = YES;

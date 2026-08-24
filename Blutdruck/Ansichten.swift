@@ -111,10 +111,10 @@ struct Uebersicht: View {
                                 .accessibilityLabel("Ans Ende springen")
                         }
                     }
+                    }
                     ToolbarItem(placement: .topBarLeading) {
                         Button { einstellungen = true } label: { Image(systemName: "gearshape") }
                             .accessibilityLabel("Einstellungen")
-                    }
                     }
                     ToolbarItem(placement: .principal) {
                         HStack(spacing: 7) {
@@ -204,7 +204,7 @@ struct Leerzustand: View {
     var oeffneEinstellungen: () -> Void = {}
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 18) {
             PulsendesLogo()
 
             VStack(spacing: 6) {
@@ -233,11 +233,30 @@ struct Leerzustand: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            HStack(spacing: 16) {
-                Button("Health-App öffnen") { Ziele.oeffnen(Ziele.healthDatenzugriff) }
-                Button("Einstellungen") { oeffneEinstellungen() }
+            VStack(spacing: 10) {
+                Text("Kommt keine Abfrage mehr? Dann wurde sie schon einmal beantwortet – dann geht es nur über die Health-App:")
+                    .font(.caption).foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Button {
+                    Ziele.oeffnen(Ziele.healthDatenzugriff)
+                } label: {
+                    Label("Health-App öffnen", systemImage: "arrow.up.forward.app")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+
+                VStack(alignment: .leading, spacing: 6) {
+                    Schritt(1, "Oben rechts auf dein Profilbild tippen")
+                    Schritt(2, "„Apps und Dienste“ wählen")
+                    Schritt(3, "„Mein Blutdruck“ antippen")
+                    Schritt(4, "Alle Schalter unter „Datenlesen erlauben“ einschalten")
+                    Schritt(5, "Zurück hierher und auf „Erneut aus Health laden“ tippen")
+                }
             }
-            .font(.footnote)
+            .padding(14)
+            .background(.background.secondary, in: RoundedRectangle(cornerRadius: 14))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 30)
@@ -1219,4 +1238,26 @@ struct AnyButtonStyle: PrimitiveButtonStyle {
         bauen = { AnyView(Button($0).buttonStyle(stil)) }
     }
     func makeBody(configuration: Configuration) -> some View { bauen(configuration) }
+}
+
+
+/// Ein numerierter Schritt in einer Anleitung.
+struct Schritt: View {
+    let nummer: Int
+    let text: String
+    init(_ nummer: Int, _ text: String) { self.nummer = nummer; self.text = text }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            Text("\(nummer)")
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(.white)
+                .frame(width: 17, height: 17)
+                .background(Color.sysFarbe, in: Circle())
+            Text(.init(text))
+                .font(.caption).foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+        }
+    }
 }
