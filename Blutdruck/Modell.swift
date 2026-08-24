@@ -100,3 +100,13 @@ enum Listenmodus: String, CaseIterable, Identifiable {
     case tage    = "Tage"
     var id: String { rawValue }
 }
+
+
+/// Vorverdichteter Puls: je Viertelstunde des Tages der mittlere Wert und die Streuung.
+struct Bandwert: Identifiable, Hashable {
+    let id = UUID()
+    var minute: Double
+    var unten: Double
+    var oben: Double
+    var mitte: Double
+}

@@ -9,6 +9,11 @@ final class Speicher: ObservableObject {
     @Published var gewicht: [Wert] = []
     @Published var koerperfett: [Wert] = []
     @Published var pulsReihe: [Wert] = []
+    /// Fertig verdichtet, damit die Diagramme nicht bei jedem Bildaufbau zehntausende
+    /// Einzelwerte durchrechnen müssen.
+    @Published var pulsBand: [Bandwert] = []
+    @Published var pulsProTag: [Wert] = []
+    @Published var pulsAnzahl = 0
     @Published var pulsHinweis = ""
     private var pulsSchluessel = ""
     @Published var meldung = ""
@@ -168,15 +173,37 @@ final class Speicher: ObservableObject {
             let proben = try await werteLesen(pulsTyp,
                                               von: von.addingTimeInterval(-300),
                                               bis: bis.addingTimeInterval(300))
-            pulsReihe = proben.map { Wert(datum: $0.startDate,
+            let werte = proben.map { Wert(datum: $0.startDate,
                                           wert: $0.quantity.doubleValue(for: proMinute).rounded()) }
-            pulsHinweis = pulsReihe.isEmpty
+            pulsAnzahl = werte.count
+            pulsReihe = werte.count > 3000 ? [] : werte     // Rohwerte nur, wenn überschaubar
+            pulsBand = verdichten(werte)
+            pulsProTag = Auswertung.proTag(werte)
+            pulsHinweis = werte.isEmpty
                 ? "Für diesen Zeitraum liegen in Health keine Pulswerte vor."
                 : ""
-            print("BD: Puls im Zeitraum: \(pulsReihe.count)")
+            print("BD: Puls im Zeitraum: \(werte.count), verdichtet auf \(pulsBand.count)")
         } catch {
-            pulsReihe = []
+            pulsReihe = []; pulsBand = []; pulsProTag = []; pulsAnzahl = 0
             pulsHinweis = "Pulswerte konnten nicht gelesen werden."
+        }
+    }
+
+    /// Je Viertelstunde des Tages: mittlerer Puls und der Bereich der mittleren 80 %.
+    private func verdichten(_ werte: [Wert]) -> [Bandwert] {
+        let kal = Calendar.current
+        var eimer: [Int: [Double]] = [:]
+        for w in werte {
+            let t = kal.dateComponents([.hour, .minute], from: w.datum)
+            let minute = (t.hour ?? 0) * 60 + (t.minute ?? 0)
+            eimer[minute / 15, default: []].append(w.wert)
+        }
+        return eimer.keys.sorted().compactMap { k in
+            let v = eimer[k]!.sorted()
+            guard let m = Auswertung.mittel(v) else { return nil }
+            let u = v[Int(Double(v.count) * 0.1)]
+            let o = v[min(v.count - 1, Int(Double(v.count) * 0.9))]
+            return Bandwert(minute: Double(k * 15 + 7), unten: u, oben: o, mitte: m)
         }
     }
 

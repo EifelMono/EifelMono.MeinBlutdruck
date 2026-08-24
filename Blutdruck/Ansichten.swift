@@ -15,7 +15,7 @@ struct Uebersicht: View {
     @State private var von = Calendar.current.date(byAdding: .day, value: -13, to: .now) ?? .now
     @State private var bis = Date.now
     @State private var gewaehlt: Messung?
-    @State private var abstand: CGFloat = 0
+    @State private var geblaettert = false
     @State private var einstellungen = false
     @State private var hinweisZeigen = false
     @AppStorage("hinweisBestaetigt") private var hinweisBestaetigt = false
@@ -41,7 +41,7 @@ struct Uebersicht: View {
         guard let a = alle.min(), let b = alle.max(), a < b else { return Date.distantPast...Date.now }
         return a...b
     }
-    private var obenAngekommen: Bool { abstand > -80 }
+    private var obenAngekommen: Bool { !geblaettert }
 
     var body: some View {
         NavigationStack {
@@ -61,13 +61,14 @@ struct Uebersicht: View {
                                       messreihen: Set(gefiltert.map(\.reihe)).count,
                                       ausreisser: ausreisser.count)
                             Kacheln(punkte: punkte, alle: gefiltert, ausreisser: ausreisser.count,
-                                    puls: speicher.pulsReihe, gemittelt: darstellung == .mittel)
+                                    puls: speicher.pulsBand.map { Wert(datum: .now, wert: $0.mitte) },
+                                    anzahlPuls: speicher.pulsAnzahl, gemittelt: darstellung == .mittel)
                             Tagesprofil(punkte: punkte, ausreisser: zeigeAusreisser ? ausreisser : [],
-                                        gewaehlt: $gewaehlt)
-                            PulsProfil(werte: speicher.pulsReihe, hinweis: speicher.pulsHinweis)
+                                        gewaehlt: $gewaehlt,
+                                        pulsBand: speicher.pulsBand, pulsAnzahl: speicher.pulsAnzahl)
                             Tagesabschnitte(punkte: punkte, aufteilung: $aufteilung)
                             Verlauf(punkte: punkte,
-                                    puls: Auswertung.proTag(speicher.pulsReihe),
+                                    puls: speicher.pulsProTag,
                                     gewicht: imZeitraum(speicher.gewicht),
                                     fett: imZeitraum(speicher.koerperfett))
                             Koerperwerte(gewicht: imZeitraum(speicher.gewicht),
@@ -79,10 +80,12 @@ struct Uebersicht: View {
                     }
                     .padding(16)
                 }
-                .onScrollGeometryChange(for: CGFloat.self) { geometrie in
-                    geometrie.contentOffset.y + geometrie.contentInsets.top
+                // Nur der Wahrheitswert, nicht die Position: sonst würde jedes Pixel
+                // beim Blättern die gesamte Ansicht neu aufbauen.
+                .onScrollGeometryChange(for: Bool.self) { geometrie in
+                    geometrie.contentOffset.y + geometrie.contentInsets.top > 80
                 } action: { _, neu in
-                    abstand = -neu
+                    geblaettert = neu
                 }
                 .refreshable { await neuLaden() }
                 .safeAreaInset(edge: .top, spacing: 0) {
@@ -92,7 +95,7 @@ struct Uebersicht: View {
                             .transition(.move(edge: .top).combined(with: .opacity))
                     }
                 }
-                .animation(.easeInOut(duration: 0.2), value: obenAngekommen)
+                .animation(.easeInOut(duration: 0.2), value: geblaettert)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         // Beide Richtungen immer erreichbar – am Ende genauso wie am Anfang.
@@ -325,6 +328,7 @@ struct Kachel: View {
 struct Kacheln: View {
     let punkte: [Messung], alle: [Messung], ausreisser: Int
     let puls: [Wert]
+    let anzahlPuls: Int
     let gemittelt: Bool
 
     var body: some View {
@@ -356,7 +360,7 @@ struct Kacheln: View {
             .background(.background.secondary, in: RoundedRectangle(cornerRadius: 12))
 
             Kachel(titel: "Ø Puls", wert: mPuls.map { "\(Int($0.rounded()))" } ?? "–",
-                   einheit: "bpm", hinweis: puls.isEmpty ? "keine Werte" : "\(puls.count) Werte",
+                   einheit: "bpm", hinweis: anzahlPuls == 0 ? "keine Werte" : "\(anzahlPuls) Werte",
                    punktFarbe: .pulsFarbe)
         }
     }
@@ -396,6 +400,8 @@ struct Tagesprofil: View {
     let punkte: [Messung]
     let ausreisser: [Messung]
     @Binding var gewaehlt: Messung?
+    var pulsBand: [Bandwert] = []
+    var pulsAnzahl = 0
 
     private var kurven: [KurvenStueck] {
         var alle: [KurvenStueck] = []
@@ -448,12 +454,7 @@ struct Tagesprofil: View {
             }
             .chartXScale(domain: 0...1440)
             .chartYScale(domain: achsenBereich((punkte + ausreisser).flatMap { [$0.sys, $0.dia] } + [grenzeSys, grenzeDia]))
-            .chartXAxis {
-                AxisMarks(values: [0.0, 360, 720, 1080, 1440]) { wert in
-                    AxisGridLine()
-                    AxisValueLabel { if let m = wert.as(Double.self) { Text("\(Int(m / 60))") } }
-                }
-            }
+            .modifier(StundenAchse(zeigen: pulsBand.isEmpty))
             .chartLegend(.hidden)
             .frame(height: 240)
             .chartOverlay { proxy in
@@ -470,7 +471,38 @@ struct Tagesprofil: View {
                 }
             }
 
-            Legende(eintraege: [("Systolisch", .sysFarbe), ("Diastolisch", .diaFarbe)])
+            if !pulsBand.isEmpty {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Puls (bpm)").font(.caption2).foregroundStyle(.secondary)
+                    Chart {
+                        ForEach(pulsBand) { b in
+                            AreaMark(x: .value("Uhrzeit", b.minute),
+                                     yStart: .value("von", b.unten), yEnd: .value("bis", b.oben))
+                                .foregroundStyle(Color.pulsFarbe.opacity(0.16))
+                                .interpolationMethod(.monotone)
+                        }
+                        ForEach(pulsBand) { b in
+                            LineMark(x: .value("Uhrzeit", b.minute), y: .value("bpm", b.mitte))
+                                .foregroundStyle(Color.pulsFarbe)
+                                .lineStyle(StrokeStyle(lineWidth: 2, lineCap: .round))
+                                .interpolationMethod(.monotone)
+                        }
+                    }
+                    .chartXScale(domain: 0...1440)
+                    .chartYScale(domain: achsenBereich(pulsBand.flatMap { [$0.unten, $0.oben] }, schritt: 10))
+                    .modifier(StundenAchse(zeigen: true))
+                    .chartLegend(.hidden)
+                    .frame(height: 84)
+                }
+            }
+
+            Legende(eintraege: [("Systolisch", .sysFarbe), ("Diastolisch", .diaFarbe)]
+                    + (pulsBand.isEmpty ? [] : [("Puls", .pulsFarbe)]))
+
+            if !pulsBand.isEmpty && pulsAnzahl > 3000 {
+                Text("Puls: \(pulsAnzahl) Werte – gezeigt sind Mittel und Streuung je Viertelstunde.")
+                    .font(.caption2).foregroundStyle(.secondary)
+            }
 
             if let g = gewaehlt {
                 Detailkarte(messung: g)
@@ -488,6 +520,20 @@ struct Tagesprofil: View {
         let dx = (Double(m.minuten) - minute) / 1440
         let dySys = (m.sys - wert) / 120, dyDia = (m.dia - wert) / 120
         return dx * dx + min(dySys * dySys, dyDia * dyDia)
+    }
+}
+
+struct StundenAchse: ViewModifier {
+    let zeigen: Bool
+    func body(content: Content) -> some View {
+        content.chartXAxis {
+            AxisMarks(values: [0.0, 360, 720, 1080, 1440]) { wert in
+                AxisGridLine()
+                if zeigen {
+                    AxisValueLabel { if let m = wert.as(Double.self) { Text("\(Int(m / 60))") } }
+                }
+            }
+        }
     }
 }
 
@@ -547,91 +593,6 @@ struct Beschriftet: View {
 }
 
 // MARK: - Puls
-
-struct PulsProfil: View {
-    let werte: [Wert]
-    let hinweis: String
-
-    var body: some View {
-        Karte(titel: "Puls über 24 Stunden") {
-            if werte.isEmpty {
-                Text(hinweis.isEmpty ? "Für diesen Zeitraum liegen in Health keine Pulswerte vor."
-                                     : hinweis)
-                    .font(.caption).foregroundStyle(.secondary)
-            } else {
-                Chart {
-                    // Bei vielen Werten – etwa aus der Apple Watch – wäre die Punktwolke
-                    // ein einziger Klumpen. Dann zeigen wir das Streuband statt der Punkte.
-                    if dicht {
-                        ForEach(band) { b in
-                            AreaMark(x: .value("Uhrzeit", b.x),
-                                     yStart: .value("von", b.unten), yEnd: .value("bis", b.oben),
-                                     series: .value("Band", b.serie))
-                                .foregroundStyle(Color.pulsFarbe.opacity(0.16))
-                        }
-                    } else {
-                        ForEach(werte) { w in
-                            PointMark(x: .value("Uhrzeit", Double(minuten(w.datum))),
-                                      y: .value("bpm", w.wert))
-                                .foregroundStyle(Color.pulsFarbe.opacity(0.75)).symbolSize(26)
-                        }
-                    }
-                    ForEach(kurve) { k in
-                        LineMark(x: .value("Uhrzeit", k.x), y: .value("bpm", k.y),
-                                 series: .value("Kurve", k.serie))
-                            .foregroundStyle(Color.pulsFarbe)
-                            .lineStyle(StrokeStyle(lineWidth: 2.5, lineCap: .round))
-                    }
-                }
-                .chartXScale(domain: 0...1440)
-                .chartYScale(domain: achsenBereich(werte.map(\.wert), schritt: 10))
-                .chartXAxis {
-                    AxisMarks(values: [0.0, 360, 720, 1080, 1440]) { wert in
-                        AxisGridLine()
-                        AxisValueLabel { if let m = wert.as(Double.self) { Text("\(Int(m / 60))") } }
-                    }
-                }
-                .chartLegend(.hidden)
-                .frame(height: 150)
-                Legende(eintraege: [("Puls", .pulsFarbe)])
-            }
-        }
-    }
-
-    private func minuten(_ d: Date) -> Int {
-        let t = Calendar.current.dateComponents([.hour, .minute], from: d)
-        return (t.hour ?? 0) * 60 + (t.minute ?? 0)
-    }
-    private var dicht: Bool { werte.count > 400 }
-
-    struct Bandpunkt: Identifiable {
-        let id = UUID(); let serie: String; let x: Double; let unten: Double; let oben: Double
-    }
-
-    /// Streuband: je Viertelstunde der Bereich, in dem die mittleren 80 % der Werte liegen.
-    private var band: [Bandpunkt] {
-        var eimer: [Int: [Double]] = [:]
-        for w in werte { eimer[minuten(w.datum) / 15, default: []].append(w.wert) }
-        return eimer.keys.sorted().compactMap { k in
-            let v = eimer[k]!.sorted()
-            guard v.count >= 3 else { return nil }
-            let u = v[Int(Double(v.count) * 0.1)]
-            let o = v[min(v.count - 1, Int(Double(v.count) * 0.9))]
-            return Bandpunkt(serie: "band", x: Double(k * 15 + 7), unten: u, oben: o)
-        }
-    }
-
-    private var kurve: [KurvenStueck] {
-        var eimer: [Int: [Double]] = [:]
-        for w in werte { eimer[minuten(w.datum) / 15, default: []].append(w.wert) }
-        let roh = eimer.keys.sorted().map { k in
-            (x: Double(k * 15 + 7), y: Auswertung.mittel(eimer[k]!) ?? 0)
-        }
-        return Auswertung.kurve(roh, von: 0, bis: 1440, breite: 70).enumerated().flatMap { i, stueck in
-            stueck.map { KurvenStueck(serie: "p\(i)", x: $0.x, y: $0.wert, farbe: .pulsFarbe) }
-        }
-    }
-}
 
 // MARK: - Tagesabschnitte, wahlweise stündlich
 
