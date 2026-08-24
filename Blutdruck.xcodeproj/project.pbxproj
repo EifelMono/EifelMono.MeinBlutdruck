@@ -17,7 +17,6 @@
 		1897E1CE49D7905C15328EA6 /* Sperre.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5863148E7311F344AEFDD971 /* Sperre.swift */; };
 		1D5A630F53479F15FF3CC34B /* Grenzwerte.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3004449DDA1CF2B1DD92C501 /* Grenzwerte.swift */; };
 		E6CD0BD63798894C47032817 /* Hinweis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A12A1C1EA6796A05708A8AF /* Hinweis.swift */; };
-		DBECB8E7A5140FBEC526A70A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF6B3C9BD6780E8A54F6D2BF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,7 +32,6 @@
 		5863148E7311F344AEFDD971 /* Sperre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sperre.swift"; sourceTree = "<group>"; };
 		3004449DDA1CF2B1DD92C501 /* Grenzwerte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Grenzwerte.swift"; sourceTree = "<group>"; };
 		3A12A1C1EA6796A05708A8AF /* Hinweis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Hinweis.swift"; sourceTree = "<group>"; };
-		CF6B3C9BD6780E8A54F6D2BF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "LaunchScreen.storyboard"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,7 +65,6 @@
 				D7596095BE408E31DDB4BFB6 /* Auswertung.swift */,
 				19702170E71F1C630D2D119E /* HealthQuelle.swift */,
 				FB500304391BE2803B85921A /* Ansichten.swift */,
-				CF6B3C9BD6780E8A54F6D2BF /* LaunchScreen.storyboard */,
 				7466D8C936D5E57CF818B755 /* Assets.xcassets */,
 				86B3BC083DF59791BE56CFAE /* Blutdruck.entitlements */,
 			);
@@ -140,7 +137,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-					DBECB8E7A5140FBEC526A70A /* LaunchScreen.storyboard in Resources */,
 					C2BEB0A13646DB198814C495 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -196,15 +192,11 @@
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 46;
+				CURRENT_PROJECT_VERSION = 47;
 				DEVELOPMENT_TEAM = B66T4RV9WF;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Mein Blutdruck";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Damit deine Blutdruckwerte nicht jedem offenstehen, der das Gerät in der Hand hat.";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "Zum Auswerten deiner Blutdruckmessungen liest die App sie aus der Health-App.";
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				MARKETING_VERSION = 5.5;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Blutdruck/Info.plist;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.klapperich.blutdruck;
 				PRODUCT_NAME = "Mein Blutdruck";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -223,15 +215,11 @@
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 46;
+				CURRENT_PROJECT_VERSION = 47;
 				DEVELOPMENT_TEAM = B66T4RV9WF;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Mein Blutdruck";
-				INFOPLIST_KEY_NSFaceIDUsageDescription = "Damit deine Blutdruckwerte nicht jedem offenstehen, der das Gerät in der Hand hat.";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "Zum Auswerten deiner Blutdruckmessungen liest die App sie aus der Health-App.";
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				MARKETING_VERSION = 5.5;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Blutdruck/Info.plist;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = de.klapperich.blutdruck;
 				PRODUCT_NAME = "Mein Blutdruck";
 				SWIFT_EMIT_LOC_STRINGS = YES;
