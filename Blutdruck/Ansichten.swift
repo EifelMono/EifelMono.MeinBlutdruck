@@ -268,38 +268,45 @@ struct Steuerung: View {
             Toggle("Ausgefilterte Messungen zeigen", isOn: $zeigeAusreisser)
                 .font(.footnote).tint(.sysFarbe)
 
-            HStack(spacing: 12) {
-                Angabe(wert: "\(ueberGrenze)", von: "von \(anzahl)",
+            HStack(spacing: 0) {
+                Angabe(wert: "\(ueberGrenze)", zusatz: "von \(anzahl)",
                        was: "über \(Int(grenzeSys))/\(Int(grenzeDia))")
                 Trenner()
-                Angabe(wert: "\(messreihen)", von: nil, was: "Messreihen")
+                Angabe(wert: "\(messreihen)", zusatz: nil, was: "Messreihen")
                 Trenner()
-                Angabe(wert: "\(ausreisser)", von: nil, was: "Ausreißer entfernt")
-                Spacer()
+                Angabe(wert: "\(ausreisser)", zusatz: nil, was: "Ausreißer")
             }
-            .padding(.top, 2)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 4)
+            .background(.background.secondary, in: RoundedRectangle(cornerRadius: 10))
         }
     }
 }
 
 private struct Angabe: View {
     let wert: String
-    let von: String?
+    let zusatz: String?
     let was: String
     var body: some View {
-        VStack(alignment: .leading, spacing: 1) {
+        VStack(spacing: 2) {
             HStack(alignment: .firstTextBaseline, spacing: 3) {
-                Text(wert).font(.subheadline.weight(.semibold).monospacedDigit())
-                if let v = von { Text(v).font(.caption2).foregroundStyle(.secondary) }
+                Text(wert).font(.headline.monospacedDigit())
+                if let z = zusatz {
+                    Text(z).font(.caption2).foregroundStyle(.secondary)
+                }
             }
-            Text(was).font(.caption2).foregroundStyle(.secondary)
+            Text(was)
+                .font(.caption2).foregroundStyle(.secondary)
+                .lineLimit(1).minimumScaleFactor(0.75)
         }
+        .frame(maxWidth: .infinity)        // gleich breite Drittel
+        .accessibilityElement(children: .combine)
     }
 }
 
 private struct Trenner: View {
     var body: some View {
-        Rectangle().fill(.quaternary).frame(width: 1, height: 22)
+        Rectangle().fill(.quaternary).frame(width: 1, height: 26)
     }
 }
 
