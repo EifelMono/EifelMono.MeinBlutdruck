@@ -20,10 +20,8 @@ struct BlutdruckApp: App {
                     Sperrbildschirm().environmentObject(schutz)
                 }
                 // Beim Wechsel in die App-Übersicht nichts preisgeben
-                if phase == .inactive && schutz.aktiv {
-                    Color(.systemBackground).ignoresSafeArea()
-                        .overlay(Image(systemName: "lock.fill")
-                            .font(.system(size: 40)).foregroundStyle(.secondary))
+                if phase == .inactive && schutz.aktiv && schutz.entsperrt {
+                    Abdeckung().transition(.opacity)
                 }
             }
             .task { await schutz.pruefen() }

@@ -16,6 +16,7 @@
 		C5C3A25314C1E3A3BCD89C45 /* Farben.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BBC40A79F2B7C85383F405 /* Farben.swift */; };
 		1897E1CE49D7905C15328EA6 /* Sperre.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5863148E7311F344AEFDD971 /* Sperre.swift */; };
 		1D5A630F53479F15FF3CC34B /* Grenzwerte.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3004449DDA1CF2B1DD92C501 /* Grenzwerte.swift */; };
+		E6CD0BD63798894C47032817 /* Hinweis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A12A1C1EA6796A05708A8AF /* Hinweis.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		88BBC40A79F2B7C85383F405 /* Farben.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Farben.swift"; sourceTree = "<group>"; };
 		5863148E7311F344AEFDD971 /* Sperre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sperre.swift"; sourceTree = "<group>"; };
 		3004449DDA1CF2B1DD92C501 /* Grenzwerte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Grenzwerte.swift"; sourceTree = "<group>"; };
+		3A12A1C1EA6796A05708A8AF /* Hinweis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Hinweis.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 				88BBC40A79F2B7C85383F405 /* Farben.swift */,
 				5863148E7311F344AEFDD971 /* Sperre.swift */,
 				3004449DDA1CF2B1DD92C501 /* Grenzwerte.swift */,
+				3A12A1C1EA6796A05708A8AF /* Hinweis.swift */,
 				1CE575DE9998218D260FECAB /* Modell.swift */,
 				D7596095BE408E31DDB4BFB6 /* Auswertung.swift */,
 				19702170E71F1C630D2D119E /* HealthQuelle.swift */,
@@ -145,6 +148,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+					E6CD0BD63798894C47032817 /* Hinweis.swift in Sources */,
 					1D5A630F53479F15FF3CC34B /* Grenzwerte.swift in Sources */,
 					1897E1CE49D7905C15328EA6 /* Sperre.swift in Sources */,
 					C5C3A25314C1E3A3BCD89C45 /* Farben.swift in Sources */,
@@ -168,7 +172,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -188,14 +192,14 @@
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = B66T4RV9WF;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Damit deine Blutdruckwerte nicht jedem offenstehen, der das Gerät in der Hand hat.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Zum Auswerten deiner Blutdruckmessungen liest die App sie aus der Health-App.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = de.klapperich.blutdruck;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -214,14 +218,14 @@
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = B66T4RV9WF;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Damit deine Blutdruckwerte nicht jedem offenstehen, der das Gerät in der Hand hat.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Zum Auswerten deiner Blutdruckmessungen liest die App sie aus der Health-App.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = de.klapperich.blutdruck;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -239,7 +243,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;

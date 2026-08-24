@@ -83,6 +83,27 @@ enum Auswertung {
         return punkte
     }
 
+    /// Ein Eintrag je Tag – Mittelwert aus allen gültigen Messungen des Tages.
+    static func proTag(_ messungen: [Messung]) -> [Messung] {
+        let kal = Calendar.current
+        let gruppen = Dictionary(grouping: messungen.filter { !$0.ausreisser }) {
+            kal.startOfDay(for: $0.datum)
+        }
+        return gruppen.keys.sorted().map { tag in
+            let teil = gruppen[tag]!
+            let pulse = teil.compactMap(\.puls)
+            var m = teil[teil.count / 2]
+            m.datum = tag
+            m.sys = (mittel(teil.map(\.sys)) ?? 0).rounded()
+            m.dia = (mittel(teil.map(\.dia)) ?? 0).rounded()
+            m.puls = pulse.isEmpty ? nil : (mittel(pulse) ?? 0).rounded()
+            m.anzahl = teil.count
+            m.hoechster = teil.map(\.sys).max() ?? m.sys
+            m.niedrigster = teil.map(\.sys).min() ?? m.sys
+            return m
+        }
+    }
+
     // MARK: Zeitraum
 
     /// Frei gewählter Abschnitt – von Tagesbeginn bis Tagesende.

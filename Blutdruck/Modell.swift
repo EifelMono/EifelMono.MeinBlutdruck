@@ -13,6 +13,8 @@ struct Messung: Identifiable, Hashable {
     var ausreisser = false
     var grund = ""
     var anzahl = 1           // aus wie vielen Messungen gemittelt
+    var hoechster: Double? = nil   // nur bei Tageszusammenfassung
+    var niedrigster: Double? = nil
 
     var minuten: Int {
         let t = Calendar.current.dateComponents([.hour, .minute], from: datum)
@@ -89,4 +91,12 @@ extension Array where Element == Wert {
               let b = neuester, a.id != b.id else { return nil }
         return b.wert - a.wert
     }
+}
+
+
+enum Listenmodus: String, CaseIterable, Identifiable {
+    case einzeln = "Einzeln"
+    case reihen  = "Messreihen"
+    case tage    = "Tage"
+    var id: String { rawValue }
 }

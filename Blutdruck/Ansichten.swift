@@ -17,6 +17,8 @@ struct Uebersicht: View {
     @State private var gewaehlt: Messung?
     @State private var abstand: CGFloat = 0
     @State private var einstellungen = false
+    @State private var hinweisZeigen = false
+    @AppStorage("hinweisBestaetigt") private var hinweisBestaetigt = false
 
     private var gefiltert: [Messung] {
         eigenerZeitraum ? Auswertung.imZeitraum(speicher.messungen, von: von, bis: bis)
@@ -47,10 +49,6 @@ struct Uebersicht: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 18) {
                         Color.clear.frame(height: 1).id("oben")
-                            .background(GeometryReader { g in
-                                Color.clear.preference(key: AbstandSchluessel.self,
-                                                       value: g.frame(in: .named("rolle")).minY)
-                            })
                         if speicher.messungen.isEmpty {
                             Leerzustand()
                         } else {
@@ -72,15 +70,18 @@ struct Uebersicht: View {
                                     fett: imZeitraum(speicher.koerperfett))
                             Koerperwerte(gewicht: imZeitraum(speicher.gewicht),
                                          fett: imZeitraum(speicher.koerperfett))
-                            Messliste(punkte: punkte.reversed(), gemittelt: darstellung == .mittel)
+                            Messliste(alle: gefiltert)
                             Fusszeile()
                         }
                         Color.clear.frame(height: 1).id("unten")
                     }
                     .padding(16)
                 }
-                .coordinateSpace(name: "rolle")
-                .onPreferenceChange(AbstandSchluessel.self) { abstand = $0 }
+                .onScrollGeometryChange(for: CGFloat.self) { geometrie in
+                    geometrie.contentOffset.y + geometrie.contentInsets.top
+                } action: { _, neu in
+                    abstand = -neu
+                }
                 .refreshable { await neuLaden() }
                 .safeAreaInset(edge: .top, spacing: 0) {
                     // Nur beim Blättern – oben steht der Zeitraum ohnehin in der Steuerung.
@@ -114,6 +115,8 @@ struct Uebersicht: View {
             .navigationTitle("Blutdruck")
             .overlay { if speicher.laedt { ProgressView().controlSize(.large) } }
             .sheet(isPresented: $einstellungen) { Einstellungen() }
+            .sheet(isPresented: $hinweisZeigen) { Haftungshinweis(erstmalig: !hinweisBestaetigt) }
+            .task { if !hinweisBestaetigt { hinweisZeigen = true } }
             .task { await neuLaden() }
             .task(id: neuladeSchluessel) { await pulsNachladen() }
         }
@@ -140,11 +143,6 @@ struct Uebersicht: View {
         let ende = kal.date(byAdding: .day, value: 1, to: kal.startOfDay(for: g.bis)) ?? g.bis
         return werte.filter { $0.datum >= start && $0.datum < ende }.sorted { $0.datum < $1.datum }
     }
-}
-
-struct AbstandSchluessel: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
 }
 
 /// Zeigt dauerhaft, welcher Zeitraum gerade ausgewertet wird – beim Blättern hervorgehoben.
@@ -832,40 +830,97 @@ private struct Kennzahl: View {
 // MARK: - Liste, Einstellungen, Fußzeile
 
 struct Messliste: View {
-    let punkte: [Messung]
-    let gemittelt: Bool
+    let alle: [Messung]
+    @State private var modus: Listenmodus = .reihen
     @State private var offen = false
+
+    private var zeilen: [Messung] {
+        switch modus {
+        case .einzeln: return alle.filter { !$0.ausreisser }.sorted { $0.datum > $1.datum }
+        case .reihen:  return Auswertung.mitteln(alle).sorted { $0.datum > $1.datum }
+        case .tage:    return Auswertung.proTag(alle).sorted { $0.datum > $1.datum }
+        }
+    }
+
     var body: some View {
-        Karte(titel: gemittelt ? "Messreihen" : "Alle Messwerte",
-              unterzeile: "\(punkte.count) Einträge") {
+        Karte(titel: "Messwerte") {
+            Picker("Zusammenfassung", selection: $modus) {
+                ForEach(Listenmodus.allCases) { Text($0.rawValue).tag($0) }
+            }.pickerStyle(.segmented)
+
+            Text(hinweis).font(.caption).foregroundStyle(.secondary)
+
             DisclosureGroup(isExpanded: $offen) {
                 VStack(spacing: 0) {
-                    ForEach(punkte.prefix(offen ? 400 : 0)) { m in
-                        HStack {
-                            Text(m.datum.formatted(.dateTime.day().month(.abbreviated)))
-                                .font(.caption).frame(width: 62, alignment: .leading)
-                            Text(m.datum.formatted(.dateTime.hour().minute()))
-                                .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
-                            Spacer()
-                            if gemittelt {
-                                Text("Ø \(m.anzahl)").font(.caption2).foregroundStyle(.secondary)
-                            }
-                            Text("\(Int(m.sys))/\(Int(m.dia))")
-                                .font(.subheadline.monospacedDigit())
-                                .frame(width: 66, alignment: .trailing)
-                            Image(systemName: Bewertung.fuer(sys: m.sys, dia: m.dia).zeichen)
-                                .font(.caption2)
-                                .foregroundStyle(Bewertung.fuer(sys: m.sys, dia: m.dia).farbe)
-                                .frame(width: 18)
-                        }
-                        .padding(.vertical, 5)
+                    ForEach(zeilen.prefix(offen ? 400 : 0)) { m in
+                        Zeile(messung: m, modus: modus)
                         Divider()
+                    }
+                    if zeilen.count > 400 {
+                        Text("… weitere \(zeilen.count - 400) nicht angezeigt")
+                            .font(.caption2).foregroundStyle(.secondary).padding(.top, 6)
                     }
                 }
             } label: {
-                Text(offen ? "Einklappen" : "Anzeigen").font(.subheadline)
+                Text(offen ? "Einklappen" : "\(zeilen.count) anzeigen").font(.subheadline)
             }
         }
+    }
+
+    private var hinweis: String {
+        switch modus {
+        case .einzeln: return "Jede einzelne Messung."
+        case .reihen:  return "Messungen, die dicht beieinander liegen, zu einem Wert zusammengefasst."
+        case .tage:    return "Ein Wert je Tag, dazu die Spanne der systolischen Werte."
+        }
+    }
+}
+
+private struct Zeile: View {
+    let messung: Messung
+    let modus: Listenmodus
+
+    var body: some View {
+        let b = Bewertung.fuer(sys: messung.sys, dia: messung.dia)
+        HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 1) {
+                Text(messung.datum.formatted(.dateTime.day().month(.abbreviated)))
+                    .font(.caption)
+                if modus == .tage {
+                    Text(messung.datum.formatted(.dateTime.weekday(.abbreviated)))
+                        .font(.caption2).foregroundStyle(.secondary)
+                } else {
+                    Text(messung.datum.formatted(.dateTime.hour().minute()))
+                        .font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
+                }
+            }
+            .frame(width: 62, alignment: .leading)
+
+            if messung.anzahl > 1 {
+                Text("Ø \(messung.anzahl)").font(.caption2).foregroundStyle(.secondary)
+                    .frame(width: 34, alignment: .leading)
+            } else {
+                Color.clear.frame(width: 34, height: 1)
+            }
+
+            Spacer()
+
+            if modus == .tage, let hoch = messung.hoechster, let tief = messung.niedrigster, hoch > tief {
+                Text("\(Int(tief))–\(Int(hoch))")
+                    .font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
+            }
+
+            Text("\(Int(messung.sys))/\(Int(messung.dia))")
+                .font(.subheadline.monospacedDigit())
+                .frame(width: 66, alignment: .trailing)
+
+            Text(messung.puls.map { "\(Int($0))" } ?? "–")
+                .font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
+                .frame(width: 26, alignment: .trailing)
+
+            Image(systemName: b.zeichen).font(.caption2).foregroundStyle(b.farbe).frame(width: 16)
+        }
+        .padding(.vertical, 5)
     }
 }
 
@@ -876,6 +931,16 @@ struct Einstellungen: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    NavigationLink {
+                        Haftungshinweis()
+                    } label: {
+                        Label("Wichtiger Hinweis zur Nutzung", systemImage: "exclamationmark.triangle")
+                    }
+                } footer: {
+                    Text(Haftung.kurz)
+                }
+
                 Section("Schutz") {
                     Toggle("Beim Öffnen sperren", isOn: $schutz.aktiv)
                     Text("Die Werte werden erst nach \(schutz.verfahren) angezeigt. Beim Wechsel in den Hintergrund sperrt die App wieder.")
@@ -939,6 +1004,7 @@ struct Einstellungen: View {
 
 struct Fusszeile: View {
     @EnvironmentObject var speicher: Speicher
+    @State private var zeigeHinweis = false
     private var version: String {
         let i = Bundle.main.infoDictionary
         return "Version \(i?["CFBundleShortVersionString"] as? String ?? "?") (Build \(i?["CFBundleVersion"] as? String ?? "?"))"
@@ -948,10 +1014,17 @@ struct Fusszeile: View {
             Text("Alle Werte stammen aus der Health-App.")
                 .font(.caption2).foregroundStyle(.secondary)
             Text(version).font(.caption2).foregroundStyle(.secondary)
-            Text("Erhöht ab \(Int(grenzeSys))/\(Int(grenzeDia)) mmHg – in den Einstellungen änderbar. Keine medizinische Beurteilung.")
+            Text("Erhöht ab \(Int(grenzeSys))/\(Int(grenzeDia)) mmHg – in den Einstellungen änderbar.")
                 .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
+            Button { zeigeHinweis = true } label: {
+                Label(Haftung.kurz, systemImage: "info.circle")
+                    .font(.caption2)
+            }
+            .buttonStyle(.plain).foregroundStyle(.secondary)
+            .padding(.top, 2)
         }
         .frame(maxWidth: .infinity).padding(.top, 6)
+        .sheet(isPresented: $zeigeHinweis) { Haftungshinweis() }
     }
 }
 

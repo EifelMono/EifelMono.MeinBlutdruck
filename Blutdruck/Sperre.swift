@@ -42,27 +42,75 @@ final class Schutz: ObservableObject {
     }
 }
 
+/// Hintergrund für Sperr- und Abdeckbildschirm – ruhig, in den Farben der App.
+struct Schutzhintergrund: View {
+    var body: some View {
+        ZStack {
+            LinearGradient(colors: [Color.sysFarbe.opacity(0.18),
+                                    Color.diaFarbe.opacity(0.22)],
+                           startPoint: .topLeading, endPoint: .bottomTrailing)
+            LinearGradient(colors: [Color(.systemBackground).opacity(0.86),
+                                    Color(.systemBackground).opacity(0.62)],
+                           startPoint: .top, endPoint: .bottom)
+            // Zwei weiche Ringe wie ein abklingender Herzschlag
+            ForEach(0..<2) { i in
+                Circle()
+                    .strokeBorder(Color.diaFarbe.opacity(0.10), lineWidth: 1.5)
+                    .frame(width: 260 + CGFloat(i) * 150, height: 260 + CGFloat(i) * 150)
+            }
+        }
+        .ignoresSafeArea()
+    }
+}
+
+/// Wird gezeigt, sobald die App in den Hintergrund oder in die Übersicht wandert.
+struct Abdeckung: View {
+    var body: some View {
+        ZStack {
+            Schutzhintergrund()
+            VStack(spacing: 14) {
+                Image("Logo")
+                    .resizable().scaledToFit().frame(width: 84, height: 84)
+                    .clipShape(RoundedRectangle(cornerRadius: 19, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 19, style: .continuous)
+                        .strokeBorder(.white.opacity(0.5)))
+                    .shadow(color: .black.opacity(0.12), radius: 10, y: 4)
+                Text("Blutdruck").font(.title3.weight(.semibold))
+                Label("geschützt", systemImage: "lock.fill")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+        }
+    }
+}
+
 struct Sperrbildschirm: View {
     @EnvironmentObject var schutz: Schutz
 
     var body: some View {
-        VStack(spacing: 18) {
-            Image(systemName: "lock.fill")
-                .font(.system(size: 44)).foregroundStyle(.secondary)
-            Text("Geschützt").font(.title2.bold())
-            Text("Die Auswertung wird erst nach dem Entsperren angezeigt.")
-                .font(.callout).foregroundStyle(.secondary).multilineTextAlignment(.center)
-            if !schutz.fehler.isEmpty {
-                Text(schutz.fehler).font(.footnote).foregroundStyle(.red)
-                    .multilineTextAlignment(.center)
+        ZStack {
+            Schutzhintergrund()
+            VStack(spacing: 16) {
+                PulsendesLogo()
+                Text("Blutdruck").font(.title2.weight(.semibold))
+                Text("Deine Werte sind geschützt und werden erst nach dem Entsperren angezeigt.")
+                    .font(.callout).foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center).padding(.horizontal, 24)
+                if !schutz.fehler.isEmpty {
+                    Text(schutz.fehler).font(.footnote).foregroundStyle(Color.statusKritisch)
+                        .multilineTextAlignment(.center).padding(.horizontal, 24)
+                }
+                Button {
+                    Task { await schutz.pruefen() }
+                } label: {
+                    Label("Mit \(schutz.verfahren) entsperren",
+                          systemImage: schutz.verfahren == "Face ID" ? "faceid" : "lock.open.fill")
+                        .padding(.horizontal, 6)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .padding(.top, 4)
             }
-            Button("Mit \(schutz.verfahren) entsperren") {
-                Task { await schutz.pruefen() }
-            }
-            .buttonStyle(.borderedProminent)
+            .padding(30)
         }
-        .padding(30)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(.systemBackground))
     }
 }
