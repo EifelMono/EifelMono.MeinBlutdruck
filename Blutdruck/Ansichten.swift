@@ -1039,6 +1039,20 @@ private struct Zeile: View {
 struct Einstellungen: View {
     @EnvironmentObject var schutz: Schutz
     @EnvironmentObject var speicher: Speicher
+    @State private var kopiert = false
+
+    /// Protokoll samt Umgebung – so lässt sich ein Problem von außen beurteilen.
+    private var bericht: String {
+        let i = Bundle.main.infoDictionary
+        let kopf = """
+        Mein Blutdruck \(i?["CFBundleShortVersionString"] as? String ?? "?")         (Build \(i?["CFBundleVersion"] as? String ?? "?"))
+        \(UIDevice.current.systemName) \(UIDevice.current.systemVersion)
+        Grenzwerte \(Int(grenzeSys))/\(Int(grenzeDia))
+        Gelesen: systolisch \(speicher.gelesen.sys) · diastolisch \(speicher.gelesen.dia) · Puls \(speicher.gelesen.puls)
+        Messungen: \(speicher.messungen.count)
+        """
+        return kopf + "\n\n" + speicher.protokoll.joined(separator: "\n")
+    }
     @EnvironmentObject var grenzen: Grenzwerte
     @Environment(\.dismiss) private var schliessen
     var body: some View {
@@ -1056,13 +1070,13 @@ struct Einstellungen: View {
                     Text(Haftung.kurz)
                 }
 
-                Section("Diagnose") {
+                Section {
                     DisclosureGroup("Letzte Schritte") {
                         if speicher.protokoll.isEmpty {
                             Text("noch nichts aufgezeichnet")
                                 .font(.caption).foregroundStyle(.secondary)
                         } else {
-                            ForEach(speicher.protokoll.suffix(12), id: \.self) { zeile in
+                            ForEach(speicher.protokoll.suffix(20), id: \.self) { zeile in
                                 Text(zeile)
                                     .font(.system(size: 11, design: .monospaced))
                                     .foregroundStyle(.secondary)
@@ -1070,6 +1084,28 @@ struct Einstellungen: View {
                         }
                     }
                     .font(.subheadline)
+
+                    Button {
+                        UIPasteboard.general.string = bericht
+                        withAnimation { kopiert = true }
+                        Task {
+                            try? await Task.sleep(for: .seconds(2))
+                            withAnimation { kopiert = false }
+                        }
+                    } label: {
+                        Label(kopiert ? "Kopiert" : "Protokoll kopieren",
+                              systemImage: kopiert ? "checkmark" : "doc.on.doc")
+                    }
+                    .disabled(speicher.protokoll.isEmpty)
+
+                    ShareLink(item: bericht) {
+                        Label("Protokoll senden", systemImage: "square.and.arrow.up")
+                    }
+                    .disabled(speicher.protokoll.isEmpty)
+                } header: {
+                    Text("Diagnose")
+                } footer: {
+                    Text("Enthält nur den Ablauf der Health-Abfrage mit Uhrzeit und die Zahl der gelesenen Werte – keine Messwerte selbst.")
                 }
 
                 Section {
