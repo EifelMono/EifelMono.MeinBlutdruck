@@ -34,6 +34,27 @@ final class Speicher: ObservableObject {
     private let mmHg = HKUnit.millimeterOfMercury()
     private var proMinute: HKUnit { HKUnit.count().unitDivided(by: .minute()) }
 
+    /// Health meldet auf Englisch – hier in verständliches Deutsch übersetzt.
+    private func deutsch(_ fehler: Error) -> String {
+        guard let hk = fehler as? HKError else {
+            return "Die Health-Daten konnten nicht gelesen werden."
+        }
+        switch hk.code {
+        case .errorAuthorizationNotDetermined:
+            return "Für den Zugriff auf deine Health-Daten wurde noch nicht entschieden."
+        case .errorAuthorizationDenied:
+            return "Der Lesezugriff auf deine Health-Daten ist nicht erlaubt."
+        case .errorHealthDataUnavailable, .errorHealthDataRestricted:
+            return "Auf diesem Gerät stehen keine Health-Daten zur Verfügung."
+        case .errorDatabaseInaccessible:
+            return "Die Health-Daten sind gerade nicht erreichbar – ist das Gerät gesperrt?"
+        case .errorUserCanceled:
+            return ""
+        default:
+            return "Die Health-Daten konnten nicht gelesen werden."
+        }
+    }
+
     // MARK: Berechtigung
 
     func erlaubnisEinholen() async -> Bool {
@@ -152,7 +173,7 @@ final class Speicher: ObservableObject {
                   + (weitGefasst ? " (Zeitstempel wichen ab, weiter gefasst zusammengeführt)" : "")
         } catch {
             print("BD: FEHLER \(error)")
-            meldung = "Health-Daten konnten nicht gelesen werden: \(error.localizedDescription)"
+            meldung = deutsch(error)
         }
     }
 

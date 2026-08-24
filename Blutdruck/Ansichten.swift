@@ -50,7 +50,7 @@ struct Uebersicht: View {
                     VStack(alignment: .leading, spacing: 18) {
                         Color.clear.frame(height: 1).id("oben")
                         if speicher.messungen.isEmpty {
-                            Leerzustand()
+                            Leerzustand(oeffneEinstellungen: { einstellungen = true })
                         } else {
                             Steuerung(zeitraum: $zeitraum, darstellung: $darstellung,
                                       zeigeAusreisser: $zeigeAusreisser,
@@ -97,8 +97,8 @@ struct Uebersicht: View {
                 }
                 .animation(.easeInOut(duration: 0.2), value: geblaettert)
                 .toolbar {
+                    if !speicher.messungen.isEmpty {
                     ToolbarItem(placement: .topBarTrailing) {
-                        // Nur wenn es etwas zu blättern gibt.
                         HStack(spacing: 2) {
                             Button {
                                 withAnimation { blaettern.scrollTo("oben", anchor: .top) }
@@ -110,12 +110,11 @@ struct Uebersicht: View {
                             } label: { Image(systemName: "arrow.down.to.line") }
                                 .accessibilityLabel("Ans Ende springen")
                         }
-                        .opacity(speicher.messungen.isEmpty ? 0 : 1)
-                        .disabled(speicher.messungen.isEmpty)
                     }
                     ToolbarItem(placement: .topBarLeading) {
                         Button { einstellungen = true } label: { Image(systemName: "gearshape") }
                             .accessibilityLabel("Einstellungen")
+                    }
                     }
                     ToolbarItem(placement: .principal) {
                         HStack(spacing: 7) {
@@ -185,6 +184,7 @@ struct Zeitraumleiste: View {
 
 struct Leerzustand: View {
     @EnvironmentObject var speicher: Speicher
+    var oeffneEinstellungen: () -> Void = {}
 
     var body: some View {
         let nichtsGelesen = speicher.gelesen.sys == 0
@@ -220,10 +220,13 @@ struct Leerzustand: View {
             .padding(14)
             .background(.background.secondary, in: RoundedRectangle(cornerRadius: 14))
 
-            Button("Erneut aus Health laden") { Task { await speicher.laden() } }
-                .buttonStyle(.bordered)
-                .disabled(speicher.laedt)
-                .font(.footnote)
+            HStack(spacing: 14) {
+                Button("Erneut aus Health laden") { Task { await speicher.laden() } }
+                    .disabled(speicher.laedt)
+                Button("Einstellungen") { oeffneEinstellungen() }
+            }
+            .buttonStyle(.bordered)
+            .font(.footnote)
 
             if nichtsGelesen {
                 VStack(spacing: 2) {
