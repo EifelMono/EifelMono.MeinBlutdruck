@@ -56,17 +56,9 @@ struct Haftungshinweis: View {
                 }
                 .padding(20)
             }
-            .navigationTitle("Mein Blutdruck")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Image("Logo")
-                        .resizable().scaledToFit().frame(width: 28, height: 28)
-                        .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
-                        .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous)
-                            .strokeBorder(.quaternary))
-                        .accessibilityHidden(true)
-                }
+                ToolbarItem(placement: .principal) { Kopfzeile(unterzeile: "Wichtiger Hinweis") }
             }
             .interactiveDismissDisabled(erstmalig)
             .toolbar {

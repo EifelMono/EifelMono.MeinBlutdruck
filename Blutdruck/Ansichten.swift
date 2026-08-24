@@ -1021,10 +1021,13 @@ struct Einstellungen: View {
                         .font(.caption2).foregroundStyle(.secondary)
                 }
             }
-            .navigationTitle("Einstellungen")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .confirmationAction) {
-                Button("Fertig") { schliessen() } } }
+            .toolbar {
+                ToolbarItem(placement: .principal) { Kopfzeile(unterzeile: "Einstellungen") }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Fertig") { schliessen() }
+                }
+            }
         }
     }
 }
@@ -1069,5 +1072,25 @@ struct PulsendesLogo: View {
             .animation(.easeInOut(duration: 0.42).repeatForever(autoreverses: true), value: gross)
             .onAppear { gross = true }
             .accessibilityHidden(true)
+    }
+}
+
+
+/// Logo, App-Name und darunter, worum es auf diesem Bildschirm geht.
+struct Kopfzeile: View {
+    let unterzeile: String
+    var body: some View {
+        HStack(spacing: 8) {
+            Image("Logo")
+                .resizable().scaledToFit().frame(width: 26, height: 26)
+                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: 6, style: .continuous)
+                    .strokeBorder(.quaternary))
+            VStack(spacing: 0) {
+                Text("Mein Blutdruck").font(.subheadline.weight(.semibold))
+                Text(unterzeile).font(.caption2).foregroundStyle(.secondary)
+            }
+        }
+        .accessibilityElement(children: .combine)
     }
 }

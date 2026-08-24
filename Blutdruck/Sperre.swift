@@ -33,7 +33,30 @@ final class Schutz: ObservableObject {
             fehler = ""
         } catch {
             entsperrt = false
-            fehler = (error as? LAError)?.code == .userCancel ? "" : error.localizedDescription
+            fehler = meldung(zu: error)
+        }
+    }
+
+    /// Systemmeldungen kommen auf Englisch – hier in verständliches Deutsch übersetzt.
+    private func meldung(zu fehler: Error) -> String {
+        guard let la = fehler as? LAError else { return "Entsperren nicht möglich." }
+        switch la.code {
+        case .userCancel, .systemCancel, .appCancel:
+            return ""
+        case .userFallback:
+            return "Bitte den Gerätecode eingeben."
+        case .biometryNotEnrolled:
+            return "Auf diesem Gerät ist \(verfahren) nicht eingerichtet."
+        case .biometryNotAvailable:
+            return "\(verfahren) steht hier nicht zur Verfügung."
+        case .biometryLockout:
+            return "Zu viele Versuche – bitte einmal mit dem Gerätecode entsperren."
+        case .passcodeNotSet:
+            return "Für den Schutz muss ein Gerätecode eingerichtet sein."
+        case .authenticationFailed:
+            return "Nicht erkannt. Bitte noch einmal versuchen."
+        default:
+            return "Entsperren nicht möglich."
         }
     }
 
