@@ -536,14 +536,50 @@ struct StundenAchse: ViewModifier {
 struct Legende: View {
     let eintraege: [(String, Color)]
     var body: some View {
-        HStack(spacing: 14) {
+        FlussLayout(waagerecht: 14, senkrecht: 4) {
             ForEach(eintraege, id: \.0) { name, farbe in
                 HStack(spacing: 5) {
                     Circle().fill(farbe).frame(width: 8, height: 8)
                     Text(name).font(.caption2).foregroundStyle(.secondary)
+                        .lineLimit(1).fixedSize()
                 }
             }
-            Spacer()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+/// Setzt die Einträge nebeneinander und bricht erst um, wenn die Zeile voll ist –
+/// nie innerhalb eines Wortes.
+struct FlussLayout: Layout {
+    var waagerecht: CGFloat = 8
+    var senkrecht: CGFloat = 4
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let breite = proposal.width ?? .infinity
+        var x: CGFloat = 0, y: CGFloat = 0, zeilenhoehe: CGFloat = 0
+        for teil in subviews {
+            let groesse = teil.sizeThatFits(.unspecified)
+            if x > 0, x + groesse.width > breite {
+                x = 0; y += zeilenhoehe + senkrecht; zeilenhoehe = 0
+            }
+            x += groesse.width + waagerecht
+            zeilenhoehe = max(zeilenhoehe, groesse.height)
+        }
+        return CGSize(width: breite == .infinity ? x : breite, height: y + zeilenhoehe)
+    }
+
+    func placeSubviews(in rahmen: CGRect, proposal: ProposedViewSize,
+                       subviews: Subviews, cache: inout ()) {
+        var x = rahmen.minX, y = rahmen.minY, zeilenhoehe: CGFloat = 0
+        for teil in subviews {
+            let groesse = teil.sizeThatFits(.unspecified)
+            if x > rahmen.minX, x + groesse.width > rahmen.maxX {
+                x = rahmen.minX; y += zeilenhoehe + senkrecht; zeilenhoehe = 0
+            }
+            teil.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(groesse))
+            x += groesse.width + waagerecht
+            zeilenhoehe = max(zeilenhoehe, groesse.height)
         }
     }
 }
