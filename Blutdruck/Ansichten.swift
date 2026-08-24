@@ -91,7 +91,7 @@ struct Uebersicht: View {
                 .safeAreaInset(edge: .top, spacing: 0) {
                     // Nur beim Blättern – oben steht der Zeitraum ohnehin in der Steuerung.
                     if !obenAngekommen && !speicher.messungen.isEmpty {
-                        Zeitraumleiste(text: zeitraumText, anzahl: gefiltert.count)
+                        Zeitraumleiste(text: zeitraumText)
                             .transition(.move(edge: .top).combined(with: .opacity))
                     }
                 }
@@ -165,13 +165,11 @@ struct Uebersicht: View {
 /// Zeigt dauerhaft, welcher Zeitraum gerade ausgewertet wird – beim Blättern hervorgehoben.
 struct Zeitraumleiste: View {
     let text: String
-    let anzahl: Int
 
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "calendar").font(.caption).foregroundStyle(.secondary)
             Text(text).font(.footnote.weight(.medium))
-            Text("· \(anzahl) Messungen").font(.footnote).foregroundStyle(.secondary)
             Spacer()
         }
         .padding(.horizontal, 16)
