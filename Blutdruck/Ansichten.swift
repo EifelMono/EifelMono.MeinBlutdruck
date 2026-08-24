@@ -112,9 +112,21 @@ struct Uebersicht: View {
                         Button { einstellungen = true } label: { Image(systemName: "gearshape") }
                             .accessibilityLabel("Einstellungen")
                     }
+                    ToolbarItem(placement: .principal) {
+                        HStack(spacing: 7) {
+                            Image("Logo")
+                                .resizable().scaledToFit().frame(width: 22, height: 22)
+                                .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+                                .overlay(RoundedRectangle(cornerRadius: 5, style: .continuous)
+                                    .strokeBorder(.quaternary))
+                            Text("Mein Blutdruck").font(.headline)
+                        }
+                        .accessibilityElement(children: .combine)
+                    }
                 }
             }
-            .navigationTitle("Mein Blutdruck (und mehr)")
+            .navigationTitle("Mein Blutdruck")
+            .navigationBarTitleDisplayMode(.inline)
             .overlay { if speicher.laedt { ProgressView().controlSize(.large) } }
             .sheet(isPresented: $einstellungen) { Einstellungen() }
             .sheet(isPresented: $hinweisZeigen) { Haftungshinweis(erstmalig: !hinweisBestaetigt) }

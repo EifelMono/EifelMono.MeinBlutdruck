@@ -37,11 +37,8 @@ struct Haftungshinweis: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    HStack(spacing: 10) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.title2).foregroundStyle(Color.statusErhoeht)
-                        Text("Bitte einmal lesen").font(.title3.weight(.semibold))
-                    }
+                    Label("Bitte einmal lesen", systemImage: "exclamationmark.triangle.fill")
+                        .font(.headline).foregroundStyle(Color.statusErhoeht)
                     Text(.init(Haftung.lang))
                         .font(.callout)
                         .fixedSize(horizontal: false, vertical: true)
@@ -59,8 +56,18 @@ struct Haftungshinweis: View {
                 }
                 .padding(20)
             }
-            .navigationTitle("Wichtiger Hinweis")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Mein Blutdruck")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Image("Logo")
+                        .resizable().scaledToFit().frame(width: 28, height: 28)
+                        .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
+                        .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous)
+                            .strokeBorder(.quaternary))
+                        .accessibilityHidden(true)
+                }
+            }
             .interactiveDismissDisabled(erstmalig)
             .toolbar {
                 if !erstmalig {
