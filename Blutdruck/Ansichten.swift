@@ -1061,6 +1061,10 @@ struct Fusszeile: View {
             }
             .buttonStyle(.plain).foregroundStyle(.secondary)
             .padding(.top, 2)
+
+            Text("© \(Calendar.current.component(.year, from: .now).formatted(.number.grouping(.never))) eifelmono")
+                .font(.caption2).foregroundStyle(.tertiary)
+                .padding(.top, 8)
         }
         .frame(maxWidth: .infinity).padding(.top, 6)
         .sheet(isPresented: $zeigeHinweis) { Haftungshinweis() }
