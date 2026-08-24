@@ -220,6 +220,12 @@ private struct Kopf: View {
     let zeitraum: String
     let einstellung: String
     let seite: Int
+
+    private var fassung: String {
+        let i = Bundle.main.infoDictionary
+        return "Mein Blutdruck \(i?["CFBundleShortVersionString"] as? String ?? "?")"
+            + " (Build \(i?["CFBundleVersion"] as? String ?? "?"))"
+    }
     var body: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 2) {
@@ -230,6 +236,7 @@ private struct Kopf: View {
             Spacer()
             VStack(alignment: .trailing, spacing: 2) {
                 Text("Erstellt \(Date().formatted(.dateTime.day(.twoDigits).month(.twoDigits).year().hour().minute()))")
+                Text(fassung)
                 Text("Seite \(seite) von 2")
             }
             .font(.system(size: 8)).foregroundStyle(.secondary)
@@ -279,7 +286,8 @@ private struct Fuss: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Divider()
-            Text("Alle Werte stammen aus der Health-App. Erhöht ab \(Int(grenzeSys))/\(Int(grenzeDia)) mmHg. "
+            Text("Erstellt mit Mein Blutdruck – © \(Calendar.current.component(.year, from: .now).formatted(.number.grouping(.never))) eifelmono. "
+                 + "Alle Werte stammen aus der Health-App. Erhöht ab \(Int(grenzeSys))/\(Int(grenzeDia)) mmHg. "
                  + "Kein Medizinprodukt – diese Auswertung diagnostiziert, behandelt oder heilt keine Erkrankung "
                  + "und ersetzt keine ärztliche Beurteilung.")
                 .font(.system(size: 7)).foregroundStyle(.secondary)
