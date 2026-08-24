@@ -208,8 +208,11 @@ struct Leerzustand: View {
 
             HStack(spacing: 10) {
                 Button {
-                    if let ziel = URL(string: "x-apple-health://") {
-                        UIApplication.shared.open(ziel)
+                    // Erst der Versuch, direkt bei den Quellen zu landen; sonst Health allgemein.
+                    let quellen = URL(string: "x-apple-health://sources")!
+                    let allgemein = URL(string: "x-apple-health://")!
+                    UIApplication.shared.open(quellen, options: [:]) { erfolg in
+                        if !erfolg { UIApplication.shared.open(allgemein) }
                     }
                 } label: {
                     Label("Health-App öffnen", systemImage: "heart.text.square")
