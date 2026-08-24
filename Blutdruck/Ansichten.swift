@@ -1039,7 +1039,6 @@ private struct Zeile: View {
 struct Einstellungen: View {
     @EnvironmentObject var schutz: Schutz
     @EnvironmentObject var speicher: Speicher
-    @State private var kopiert = false
 
     /// Protokoll samt Umgebung – so lässt sich ein Problem von außen beurteilen.
     private var bericht: String {
@@ -1139,19 +1138,6 @@ struct Einstellungen: View {
                         }
                     }
                     .font(.subheadline)
-
-                    Button {
-                        UIPasteboard.general.string = bericht
-                        withAnimation { kopiert = true }
-                        Task {
-                            try? await Task.sleep(for: .seconds(2))
-                            withAnimation { kopiert = false }
-                        }
-                    } label: {
-                        Label(kopiert ? "Kopiert" : "Protokoll kopieren",
-                              systemImage: kopiert ? "checkmark" : "doc.on.doc")
-                    }
-                    .disabled(speicher.protokoll.isEmpty)
 
                     ShareLink(item: bericht) {
                         Label("Protokoll senden", systemImage: "square.and.arrow.up")
