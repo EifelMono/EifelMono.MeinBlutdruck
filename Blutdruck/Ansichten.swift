@@ -1164,29 +1164,35 @@ struct Einstellungen: View {
 struct Fusszeile: View {
     @EnvironmentObject var speicher: Speicher
     @State private var zeigeHinweis = false
+
     private var version: String {
         let i = Bundle.main.infoDictionary
         return "Version \(i?["CFBundleShortVersionString"] as? String ?? "?") (Build \(i?["CFBundleVersion"] as? String ?? "?"))"
     }
+    private var jahr: String {
+        Calendar.current.component(.year, from: .now).formatted(.number.grouping(.never))
+    }
+
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 6) {
             Text("Alle Werte stammen aus der Health-App.")
-                .font(.caption2).foregroundStyle(.secondary)
-            Text("© \(Calendar.current.component(.year, from: .now).formatted(.number.grouping(.never))) eifelmono")
-                .font(.caption2).foregroundStyle(.secondary)
-            Text(version).font(.caption2).foregroundStyle(.secondary)
             Text("Erhöht ab \(Int(grenzeSys))/\(Int(grenzeDia)) mmHg – in den Einstellungen änderbar.")
-                .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
             Button { zeigeHinweis = true } label: {
                 Label(Haftung.kurz, systemImage: "info.circle")
-                    .font(.caption2)
             }
-            .buttonStyle(.plain).foregroundStyle(.secondary)
-            .padding(.top, 2)
+            .buttonStyle(.plain)
 
-
+            VStack(spacing: 2) {
+                Text(version)
+                Text("© \(jahr) eifelmono")
+            }
+            .padding(.top, 6)
         }
-        .frame(maxWidth: .infinity).padding(.top, 6)
+        .font(.caption2)
+        .foregroundStyle(.secondary)
+        .multilineTextAlignment(.center)
+        .frame(maxWidth: .infinity)
+        .padding(.top, 6)
         .sheet(isPresented: $zeigeHinweis) { Haftungshinweis() }
     }
 }
