@@ -197,7 +197,7 @@ struct Leerzustand: View {
                 Text("systolisch \(speicher.gelesen.sys) · diastolisch \(speicher.gelesen.dia)")
                     .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
                 if speicher.gelesen.sys == 0 {
-                    Text("Health-App → Profilbild → Apps und Dienste → Blutdruck")
+                    Text("Dort: Profilbild → Apps und Dienste → Mein Blutdruck")
                         .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
                 }
             }
@@ -205,6 +205,29 @@ struct Leerzustand: View {
             .background(.background.secondary, in: RoundedRectangle(cornerRadius: 10))
             Button("Erneut aus Health laden") { Task { await speicher.laden() } }
                 .buttonStyle(.borderedProminent)
+
+            HStack(spacing: 10) {
+                Button {
+                    if let ziel = URL(string: "x-apple-health://") {
+                        UIApplication.shared.open(ziel)
+                    }
+                } label: {
+                    Label("Health-App öffnen", systemImage: "heart.text.square")
+                }
+                Button {
+                    if let ziel = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(ziel)
+                    }
+                } label: {
+                    Label("Einstellungen", systemImage: "gearshape")
+                }
+            }
+            .font(.footnote)
+            .buttonStyle(.bordered)
+
+            Text("iOS erlaubt keiner App, direkt auf ihre eigene Berechtigungsseite zu springen – die letzten Schritte musst du dort selbst gehen.")
+                .font(.caption2).foregroundStyle(.secondary)
+                .multilineTextAlignment(.center).padding(.horizontal, 12)
         }
         .frame(maxWidth: .infinity).padding(.vertical, 40)
     }
