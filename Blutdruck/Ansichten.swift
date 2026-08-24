@@ -208,27 +208,20 @@ struct Leerzustand: View {
 
             HStack(spacing: 10) {
                 Button {
-                    // Erst der Versuch, direkt bei den Quellen zu landen; sonst Health allgemein.
-                    let quellen = URL(string: "x-apple-health://sources")!
-                    let allgemein = URL(string: "x-apple-health://")!
-                    UIApplication.shared.open(quellen, options: [:]) { erfolg in
-                        if !erfolg { UIApplication.shared.open(allgemein) }
-                    }
+                    Ziele.oeffnen(Ziele.healthDatenzugriff)
                 } label: {
-                    Label("Health-App öffnen", systemImage: "heart.text.square")
+                    Label("Health-Einstellungen", systemImage: "heart.text.square")
                 }
                 Button {
-                    if let ziel = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(ziel)
-                    }
+                    Ziele.oeffnen([UIApplication.openSettingsURLString])
                 } label: {
-                    Label("Einstellungen", systemImage: "gearshape")
+                    Label("App-Einstellungen", systemImage: "gearshape")
                 }
             }
             .font(.footnote)
             .buttonStyle(.bordered)
 
-            Text("iOS erlaubt keiner App, direkt auf ihre eigene Berechtigungsseite zu springen – die letzten Schritte musst du dort selbst gehen.")
+            Text("Führt so weit wie iOS es zulässt – den letzten Schritt zu „Mein Blutdruck“ musst du dort selbst tippen.")
                 .font(.caption2).foregroundStyle(.secondary)
                 .multilineTextAlignment(.center).padding(.horizontal, 12)
         }
@@ -1154,5 +1147,31 @@ struct Kopfzeile: View {
             }
         }
         .accessibilityElement(children: .combine)
+    }
+}
+
+
+/// Öffnet das erste Ziel, das iOS annimmt. Manche Adressen in die Systemeinstellungen
+/// sind nicht dokumentiert und können jederzeit wegfallen – deshalb die Kette mit Rückfall.
+enum Ziele {
+    static let healthDatenzugriff = [
+        "x-apple-health://sources",          // Quellenliste in der Health-App
+        "App-prefs:HEALTH",                  // Einstellungen → Health
+        "prefs:root=HEALTH",
+        "x-apple-health://",                 // Health-App allgemein
+        UIApplication.openSettingsURLString  // zuletzt: Einstellungen der App
+    ]
+
+    static func oeffnen(_ adressen: [String]) {
+        var offen = adressen
+        func naechstes() {
+            guard !offen.isEmpty else { return }
+            let text = offen.removeFirst()
+            guard let ziel = URL(string: text) else { naechstes(); return }
+            UIApplication.shared.open(ziel, options: [:]) { erfolg in
+                if !erfolg { naechstes() }
+            }
+        }
+        naechstes()
     }
 }
