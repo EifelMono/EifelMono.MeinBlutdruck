@@ -135,8 +135,17 @@ struct Uebersicht: View {
             .sheet(isPresented: $einstellungen) { Einstellungen() }
             .sheet(isPresented: $hinweisZeigen) { Haftungshinweis(erstmalig: !hinweisBestaetigt) }
             .task { if !hinweisBestaetigt { hinweisZeigen = true } }
-            .task { await neuLaden() }
-            .task(id: neuladeSchluessel) { await pulsNachladen() }
+            // Erst nach dem Hinweis nach Health fragen: sonst konkurrieren beim ersten
+            // Start zwei Dialoge, iOS zeigt nur einen – und die Health-Anfrage geht
+            // verloren, wodurch die App in Health gar nicht erst auftaucht.
+            .task(id: hinweisBestaetigt) {
+                guard hinweisBestaetigt else { return }
+                await neuLaden()
+            }
+            .task(id: neuladeSchluessel) {
+                guard hinweisBestaetigt else { return }
+                await pulsNachladen()
+            }
         }
     }
 
