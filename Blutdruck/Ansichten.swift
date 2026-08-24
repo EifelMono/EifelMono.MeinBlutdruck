@@ -204,9 +204,7 @@ struct Leerzustand: View {
     var oeffneEinstellungen: () -> Void = {}
 
     var body: some View {
-        let nichtsGelesen = speicher.gelesen.sys == 0
-
-        VStack(spacing: 18) {
+        VStack(spacing: 20) {
             PulsendesLogo()
 
             VStack(spacing: 6) {
@@ -218,8 +216,7 @@ struct Leerzustand: View {
                     .multilineTextAlignment(.center)
             }
 
-            // Der Weg zur Freigabe: Knopf und Erklärung gehören zusammen.
-            VStack(spacing: 12) {
+            VStack(spacing: 8) {
                 Button {
                     Task { await speicher.zugriffAnfragen() }
                 } label: {
@@ -230,57 +227,17 @@ struct Leerzustand: View {
                 .controlSize(.large)
                 .disabled(speicher.laedt)
 
-                Text("Beim ersten Mal erscheint Apples Abfrage. Wichtig: dort bis zum Abschnitt „darf Daten lesen“ nach unten scrollen und alles einschalten.")
+                Text("In Apples Abfrage bis „darf Daten lesen“ nach unten scrollen und alles einschalten.")
                     .font(.caption).foregroundStyle(.secondary)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Divider()
-
-                Button {
-                    Ziele.oeffnen(Ziele.healthDatenzugriff)
-                } label: {
-                    Label("Health-Einstellungen öffnen", systemImage: "gearshape")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-
-                Text("Kommt keine Abfrage mehr, wurde sie schon einmal beantwortet: dann dort auf dein Profilbild, „Apps und Dienste“, „Mein Blutdruck“ – und alles einschalten.")
-                    .font(.caption).foregroundStyle(.secondary)
-                    .multilineTextAlignment(.leading)
+                    .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(14)
-            .background(.background.secondary, in: RoundedRectangle(cornerRadius: 14))
 
-            HStack(spacing: 14) {
-                Button("Erneut aus Health laden") { Task { await speicher.laden() } }
-                    .disabled(speicher.laedt)
+            HStack(spacing: 16) {
+                Button("Health-App öffnen") { Ziele.oeffnen(Ziele.healthDatenzugriff) }
                 Button("Einstellungen") { oeffneEinstellungen() }
             }
-            .buttonStyle(.bordered)
             .font(.footnote)
-
-            if nichtsGelesen {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Was bisher geschah").font(.caption2.weight(.semibold))
-                        .foregroundStyle(.secondary).textCase(.uppercase)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    ForEach(speicher.protokoll.suffix(8), id: \.self) { zeile in
-                        Text(zeile)
-                            .font(.system(size: 10, design: .monospaced))
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    if speicher.protokoll.isEmpty {
-                        Text("noch nichts – bitte oben auf „Health-Zugriff erlauben“ tippen")
-                            .font(.caption2).foregroundStyle(.secondary)
-                    }
-                }
-                .padding(10)
-                .background(.background.secondary, in: RoundedRectangle(cornerRadius: 10))
-                .padding(.top, 4)
-            }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 30)
@@ -1062,6 +1019,7 @@ private struct Zeile: View {
 
 struct Einstellungen: View {
     @EnvironmentObject var schutz: Schutz
+    @EnvironmentObject var speicher: Speicher
     @EnvironmentObject var grenzen: Grenzwerte
     @Environment(\.dismiss) private var schliessen
     var body: some View {
@@ -1077,6 +1035,22 @@ struct Einstellungen: View {
                     }
                 } footer: {
                     Text(Haftung.kurz)
+                }
+
+                Section("Diagnose") {
+                    DisclosureGroup("Letzte Schritte") {
+                        if speicher.protokoll.isEmpty {
+                            Text("noch nichts aufgezeichnet")
+                                .font(.caption).foregroundStyle(.secondary)
+                        } else {
+                            ForEach(speicher.protokoll.suffix(12), id: \.self) { zeile in
+                                Text(zeile)
+                                    .font(.system(size: 11, design: .monospaced))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    .font(.subheadline)
                 }
 
                 Section {
