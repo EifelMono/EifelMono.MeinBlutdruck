@@ -17,8 +17,7 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Startlogo" translatesAutoresizingMaskIntoConstraints="NO" id="logoBild">
                                 <rect key="frame" x="86.5" y="316" width="220" height="220"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="220" id="logoBreite"/>
-                                    <constraint firstAttribute="height" constant="220" id="logoHoehe"/>
+                                    <constraint firstAttribute="width" secondItem="logoBild" secondAttribute="height" multiplier="1:1" id="logoQuadrat"/>
                                 </constraints>
                             </imageView>
                         </subviews>
@@ -27,6 +26,7 @@
                         <constraints>
                             <constraint firstItem="logoBild" firstAttribute="centerX" secondItem="startBildView" secondAttribute="centerX" id="logoMitteX"/>
                             <constraint firstItem="logoBild" firstAttribute="centerY" secondItem="startBildView" secondAttribute="centerY" id="logoMitteY"/>
+                            <constraint firstItem="logoBild" firstAttribute="width" secondItem="startBildView" secondAttribute="width" multiplier="0.5" id="logoAnteil"/>
                         </constraints>
                     </view>
                 </viewController>
