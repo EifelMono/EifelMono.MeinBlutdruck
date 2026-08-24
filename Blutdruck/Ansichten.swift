@@ -875,7 +875,7 @@ struct Messliste: View {
     }
 
     var body: some View {
-        Karte(titel: "Messwerte") {
+        Karte(titel: "Blutdruck-Messwerte") {
             Picker("Zusammenfassung", selection: $modus) {
                 ForEach(Listenmodus.allCases) { Text($0.rawValue).tag($0) }
             }.pickerStyle(.segmented)
