@@ -499,16 +499,8 @@ struct Tagesprofil: View {
             Legende(eintraege: [("Systolisch", .sysFarbe), ("Diastolisch", .diaFarbe)]
                     + (pulsBand.isEmpty ? [] : [("Puls", .pulsFarbe)]))
 
-            if !pulsBand.isEmpty && pulsAnzahl > 3000 {
-                Text("Puls: \(pulsAnzahl) Werte – gezeigt sind Mittel und Streuung je Viertelstunde.")
-                    .font(.caption2).foregroundStyle(.secondary)
-            }
-
             if let g = gewaehlt {
                 Detailkarte(messung: g)
-            } else {
-                Text("Einen Messpunkt antippen zeigt die Einzelheiten.")
-                    .font(.caption).foregroundStyle(.secondary)
             }
         }
     }
