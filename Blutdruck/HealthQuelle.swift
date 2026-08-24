@@ -14,6 +14,15 @@ final class Speicher: ObservableObject {
     @Published var pulsBand: [Bandwert] = []
     @Published var pulsProTag: [Wert] = []
     @Published var pulsAnzahl = 0
+    /// Sichtbares Protokoll – damit sich ein Problem am Gerät ablesen lässt.
+    @Published var protokoll: [String] = []
+
+    private func notiz(_ text: String) {
+        let uhr = Date().formatted(.dateTime.hour().minute().second())
+        protokoll.append("\(uhr)  \(text)")
+        if protokoll.count > 40 { protokoll.removeFirst() }
+        print("BD: \(text)")
+    }
     @Published var pulsHinweis = ""
     private var pulsSchluessel = ""
     @Published var meldung = ""
@@ -62,17 +71,41 @@ final class Speicher: ObservableObject {
             meldung = "Auf diesem Gerät gibt es keine Health-Daten."
             return false
         }
-        do {
-            // Nur lesen – die App schreibt nichts in die Health-App.
-            // Für Korrelationstypen darf keine Leseerlaubnis angefordert werden,
-            // der Blutdruck wird über seine Einzelwerte freigegeben.
-            try await store.requestAuthorization(
-                toShare: [], read: [sysTyp, diaTyp, pulsTyp, gewichtTyp, fettTyp])
-            return true
-        } catch {
-            meldung = "Health hat den Zugriff nicht erlaubt: \(error.localizedDescription)"
+        // Nur lesen – die App schreibt nichts in die Health-App.
+        // Für Korrelationstypen darf keine Leseerlaubnis angefordert werden,
+        // der Blutdruck wird über seine Einzelwerte freigegeben.
+        let lesen: Set<HKObjectType> = [sysTyp, diaTyp, pulsTyp, gewichtTyp, fettTyp]
+
+        // Bewusst die Fassung mit Rückruf statt der modernen await-Fassung:
+        // Mit leerer Schreibliste kehrt letztere auf dem Gerät nicht zurück,
+        // die App bliebe ohne Meldung hängen.
+        notiz("Anfrage an Health wird gestellt …")
+        let ergebnis: (Bool, Error?) = await withCheckedContinuation { fortsetzen in
+            var beantwortet = false
+            store.requestAuthorization(toShare: [], read: lesen) { erfolg, fehler in
+                guard !beantwortet else { return }
+                beantwortet = true
+                fortsetzen.resume(returning: (erfolg, fehler))
+            }
+            // Sicherheitsnetz: lieber eine Meldung als ein hängender Bildschirm.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 20) {
+                guard !beantwortet else { return }
+                beantwortet = true
+                self.notiz("Health hat nach 20 Sekunden nicht geantwortet")
+                fortsetzen.resume(returning: (false, nil))
+            }
+        }
+
+        notiz("Health hat geantwortet: erfolg=\(ergebnis.0), fehler=\(ergebnis.1 == nil ? "keiner" : "ja")")
+        if let fehler = ergebnis.1 {
+            meldung = "Health hat den Zugriff nicht erlaubt: \(deutsch(fehler))"
             return false
         }
+        if !ergebnis.0 {
+            meldung = "Die Abfrage kam nicht zustande. Bitte noch einmal auf „Health-Zugriff erlauben“ tippen."
+            return false
+        }
+        return true
     }
 
     /// Vom Benutzer ausgelöst: fragt die Freigabe an und lädt danach.
@@ -81,9 +114,9 @@ final class Speicher: ObservableObject {
     /// wenn gerade ein anderes Blatt offen ist.
     @discardableResult
     func zugriffAnfragen() async -> Bool {
-        print("BD: Freigabe wird angefragt")
+        notiz("Freigabe wird angefragt")
         let erlaubt = await erlaubnisEinholen()
-        print("BD: Anfrage beantwortet: \(erlaubt)")
+        notiz("Anfrage beantwortet: \(erlaubt)")
         if erlaubt { await laden() }
         return erlaubt
     }
@@ -94,19 +127,19 @@ final class Speicher: ObservableObject {
         laedt = true
         pulsSchluessel = ""
         defer { laedt = false }
-        print("BD: laden() gestartet, Health verfügbar: \(healthVerfuegbar)")
+        notiz("Laden gestartet · Health verfügbar: \(healthVerfuegbar)")
         guard await erlaubnisEinholen() else {
-            print("BD: Berechtigung fehlgeschlagen – \(meldung)")
+            notiz("Berechtigung fehlgeschlagen")
             return
         }
-        print("BD: Berechtigung erteilt, frage Blutdruck ab …")
+        notiz("Berechtigung erteilt, frage Blutdruck ab")
         do {
             // Einzelwerte abfragen statt der Blutdruck-Korrelation: Korrelationen legt nur
             // die schreibende App an, die beiden Quantitäten gibt es dagegen immer.
             async let sysA = werteLesen(sysTyp)
             async let diaA = werteLesen(diaTyp)
             let (systolisch, diastolisch) = try await (sysA, diaA)
-            print("BD: systolisch \(systolisch.count), diastolisch \(diastolisch.count)")
+            notiz("systolisch \(systolisch.count) · diastolisch \(diastolisch.count)")
             if let e = systolisch.first, let l = systolisch.last {
                 print("BD: Zeitraum \(e.startDate) bis \(l.startDate)")
                 print("BD: Quelle \(e.sourceRevision.source.name)")

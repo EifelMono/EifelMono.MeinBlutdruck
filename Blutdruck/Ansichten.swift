@@ -262,12 +262,23 @@ struct Leerzustand: View {
             .font(.footnote)
 
             if nichtsGelesen {
-                VStack(spacing: 2) {
-                    Text("Aus Health gelesen").font(.caption2.weight(.semibold))
-                        .foregroundStyle(.tertiary).textCase(.uppercase)
-                    Text("systolisch \(speicher.gelesen.sys) · diastolisch \(speicher.gelesen.dia)")
-                        .font(.caption2.monospacedDigit()).foregroundStyle(.tertiary)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Was bisher geschah").font(.caption2.weight(.semibold))
+                        .foregroundStyle(.secondary).textCase(.uppercase)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    ForEach(speicher.protokoll.suffix(8), id: \.self) { zeile in
+                        Text(zeile)
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    if speicher.protokoll.isEmpty {
+                        Text("noch nichts – bitte oben auf „Health-Zugriff erlauben“ tippen")
+                            .font(.caption2).foregroundStyle(.secondary)
+                    }
                 }
+                .padding(10)
+                .background(.background.secondary, in: RoundedRectangle(cornerRadius: 10))
                 .padding(.top, 4)
             }
         }
