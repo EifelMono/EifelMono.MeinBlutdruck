@@ -19,6 +19,8 @@ struct Uebersicht: View {
     @State private var gewaehlt: Messung?
     @State private var geblaettert = false
     @State private var einstellungen = false
+    @State private var pdf: URL?
+    @State private var pdfLaeuft = false
     @State private var hinweisZeigen = false
     @AppStorage("hinweisBestaetigt") private var hinweisBestaetigt = false
 
@@ -77,6 +79,7 @@ struct Uebersicht: View {
                             Koerperwerte(gewicht: imZeitraum(speicher.gewicht),
                                          fett: imZeitraum(speicher.koerperfett))
                             Messliste(alle: gefiltert)
+                            BerichtKarte(laeuft: pdfLaeuft, pdf: pdf, erzeugen: berichtErzeugen)
                             Fusszeile()
                         }
                         Color.clear.frame(height: 1).id("unten")
@@ -173,6 +176,21 @@ struct Uebersicht: View {
     private func pulsNachladen() async {
         guard let g = grenzen else { return }
         await speicher.pulsLaden(von: g.von, bis: g.bis)
+    }
+
+    /// Baut den PDF-Bericht aus dem, was gerade angezeigt wird.
+    private func berichtErzeugen() {
+        pdfLaeuft = true
+        Task {
+            // kurz Luft lassen, damit die Anzeige den Fortschritt zeigt
+            try? await Task.sleep(for: .milliseconds(50))
+            pdf = PDFBericht.erzeugen(messungen: gefiltert, punkte: punkte,
+                                      puls: speicher.pulsBand,
+                                      gewicht: imZeitraum(speicher.gewicht),
+                                      fett: imZeitraum(speicher.koerperfett),
+                                      zeitraum: zeitraumText)
+            pdfLaeuft = false
+        }
     }
 
     private func imZeitraum(_ werte: [Wert]) -> [Wert] {
@@ -1342,6 +1360,38 @@ struct LetzteMessung: View {
             }
             .padding(12)
             .background(.background.secondary, in: RoundedRectangle(cornerRadius: 12))
+        }
+    }
+}
+
+
+/// Erzeugt den PDF-Bericht und bietet ihn zum Weitergeben an.
+struct BerichtKarte: View {
+    let laeuft: Bool
+    let pdf: URL?
+    let erzeugen: () -> Void
+
+    var body: some View {
+        Karte(titel: "Bericht", unterzeile: "Zwei Seiten A4 mit Kennzahlen, Diagrammen und Tagestabelle") {
+            if let pdf {
+                ShareLink(item: pdf) {
+                    Label("Bericht senden oder sichern", systemImage: "square.and.arrow.up")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                Button("Neu erzeugen", action: erzeugen)
+                    .font(.footnote)
+            } else {
+                Button(action: erzeugen) {
+                    HStack {
+                        if laeuft { ProgressView().controlSize(.small) }
+                        Text(laeuft ? "wird erstellt …" : "Bericht als PDF erstellen")
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(laeuft)
+            }
         }
     }
 }
