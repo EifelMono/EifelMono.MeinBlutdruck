@@ -416,8 +416,7 @@ struct Tagesprofil: View {
     }
 
     var body: some View {
-        Karte(titel: "Tagesverlauf über 24 Stunden",
-              unterzeile: "Alle Messtage übereinandergelegt · Linie = gleitender Mittelwert") {
+        Karte(titel: "Tagesverlauf über 24 Stunden") {
             Chart {
                 ForEach([grenzeSys, grenzeDia], id: \.self) { g in
                     RuleMark(y: .value("Grenzwert", g))

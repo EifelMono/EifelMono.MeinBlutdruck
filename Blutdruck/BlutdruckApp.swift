@@ -24,6 +24,9 @@ struct BlutdruckApp: App {
                     Abdeckung().transition(.opacity)
                 }
             }
+            // Die Oberfläche ist durchgehend deutsch – dann sollen es Datum und
+            // Uhrzeit auch sein, unabhängig von der Systemsprache.
+            .environment(\.locale, Locale(identifier: "de_DE"))
             .task { await schutz.pruefen() }
             .onChange(of: phase) { _, neu in
                 if neu == .background { schutz.sperren() }
