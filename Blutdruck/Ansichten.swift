@@ -35,7 +35,7 @@ struct Uebersicht: View {
     }
     private var zeitraumText: String {
         guard let g = grenzen else { return "kein Zeitraum" }
-        let f = Date.FormatStyle.dateTime.day().month(.abbreviated).year(.twoDigits)
+        let f = Date.FormatStyle.dateTime.day(.twoDigits).month(.twoDigits).year(.twoDigits)
         return "\(g.von.formatted(f)) – \(g.bis.formatted(f))"
     }
     private var zeitfenster: ClosedRange<Date> {
@@ -199,7 +199,7 @@ struct Zeitraumleiste: View {
                 HStack(spacing: 5) {
                     Text("zuletzt")
                         .font(.caption2).foregroundStyle(.secondary)
-                    Text(m.datum.formatted(.dateTime.day().month(.abbreviated).hour().minute()))
+                    Text(m.datum.formatted(.dateTime.day(.twoDigits).month(.twoDigits).hour().minute()))
                         .font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
                     Text("\(Int(m.sys))/\(Int(m.dia))")
                         .font(.footnote.weight(.medium).monospacedDigit())
@@ -1322,7 +1322,8 @@ struct LetzteMessung: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Letzte Messung").font(.caption2.weight(.semibold))
                         .foregroundStyle(.secondary).textCase(.uppercase)
-                    Text(m.datum.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated)
+                    Text(m.datum.formatted(.dateTime.weekday(.abbreviated)
+                                           .day(.twoDigits).month(.twoDigits)
                                            .hour().minute()))
                         .font(.subheadline)
                 }
