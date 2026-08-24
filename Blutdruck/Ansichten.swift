@@ -62,6 +62,7 @@ struct Uebersicht: View {
                                       anzahl: punkte.count,
                                       messreihen: Set(gefiltert.map(\.reihe)).count,
                                       ausreisser: ausreisser.count)
+                            LetzteMessung(messung: gefiltert.max(by: { $0.datum < $1.datum }))
                             Kacheln(punkte: punkte, alle: gefiltert, ausreisser: ausreisser.count,
                                     puls: speicher.pulsBand.map { Wert(datum: .now, wert: $0.mitte) },
                                     anzahlPuls: speicher.pulsAnzahl, gemittelt: darstellung == .mittel)
@@ -1290,6 +1291,44 @@ struct Schritt: View {
                 .font(.caption).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             Spacer(minLength: 0)
+        }
+    }
+}
+
+
+/// Die jüngste Messung des gewählten Zeitraums – wann sie war und was sie ergab.
+struct LetzteMessung: View {
+    let messung: Messung?
+
+    var body: some View {
+        if let m = messung {
+            let b = Bewertung.fuer(sys: m.sys, dia: m.dia)
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Letzte Messung").font(.caption2.weight(.semibold))
+                        .foregroundStyle(.secondary).textCase(.uppercase)
+                    Text(m.datum.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated)
+                                           .hour().minute()))
+                        .font(.subheadline)
+                }
+                Spacer()
+                VStack(alignment: .trailing, spacing: 2) {
+                    HStack(alignment: .firstTextBaseline, spacing: 3) {
+                        Text("\(Int(m.sys))/\(Int(m.dia))")
+                            .font(.title3.weight(.semibold).monospacedDigit())
+                        Text("mmHg").font(.caption2).foregroundStyle(.secondary)
+                    }
+                    HStack(spacing: 6) {
+                        if let p = m.puls {
+                            Text("\(Int(p)) bpm").font(.caption2).foregroundStyle(.secondary)
+                        }
+                        Label(b.rawValue, systemImage: b.zeichen)
+                            .font(.caption2.weight(.medium)).foregroundStyle(b.farbe)
+                    }
+                }
+            }
+            .padding(12)
+            .background(.background.secondary, in: RoundedRectangle(cornerRadius: 12))
         }
     }
 }
