@@ -197,7 +197,7 @@ struct Leerzustand: View {
                 Text("systolisch \(speicher.gelesen.sys) · diastolisch \(speicher.gelesen.dia)")
                     .font(.caption.monospacedDigit()).foregroundStyle(.secondary)
                 if speicher.gelesen.sys == 0 {
-                    Text("Dort: Profilbild → Apps und Dienste → Mein Blutdruck")
+                    Text("Null heißt: keine Freigabe oder noch keine Werte vorhanden.")
                         .font(.caption2).foregroundStyle(.secondary).multilineTextAlignment(.center)
                 }
             }
@@ -231,7 +231,7 @@ struct Leerzustand: View {
             }
             .font(.footnote)
 
-            Text("In der Health-App: Profilbild → Apps und Dienste → Mein Blutdruck. Weiter darf keine App führen.")
+            Text("Den letzten Schritt musst du selbst tippen: in der Health-App auf dein Profilbild, dann „Apps und Dienste“, dann „Mein Blutdruck“ – dort alles einschalten.")
                 .font(.caption2).foregroundStyle(.secondary)
                 .multilineTextAlignment(.center).padding(.horizontal, 12)
         }
