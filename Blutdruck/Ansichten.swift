@@ -94,7 +94,8 @@ struct Uebersicht: View {
                 .safeAreaInset(edge: .top, spacing: 0) {
                     // Nur beim Blättern – oben steht der Zeitraum ohnehin in der Steuerung.
                     if !obenAngekommen && !speicher.messungen.isEmpty {
-                        Zeitraumleiste(text: zeitraumText)
+                        Zeitraumleiste(text: zeitraumText,
+                                       letzte: gefiltert.max(by: { $0.datum < $1.datum }))
                             .transition(.move(edge: .top).combined(with: .opacity))
                     }
                 }
@@ -186,12 +187,26 @@ struct Uebersicht: View {
 /// Zeigt dauerhaft, welcher Zeitraum gerade ausgewertet wird – beim Blättern hervorgehoben.
 struct Zeitraumleiste: View {
     let text: String
+    var letzte: Messung? = nil
 
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: "calendar").font(.caption).foregroundStyle(.secondary)
             Text(text).font(.footnote.weight(.medium))
-            Spacer()
+                .lineLimit(1).minimumScaleFactor(0.8)
+            Spacer(minLength: 8)
+            if let m = letzte {
+                HStack(spacing: 5) {
+                    Text("zuletzt")
+                        .font(.caption2).foregroundStyle(.secondary)
+                    Text(m.datum.formatted(.dateTime.day().month(.abbreviated).hour().minute()))
+                        .font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
+                    Text("\(Int(m.sys))/\(Int(m.dia))")
+                        .font(.footnote.weight(.medium).monospacedDigit())
+                        .foregroundStyle(Bewertung.fuer(sys: m.sys, dia: m.dia).farbe)
+                }
+                .lineLimit(1)
+            }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 7)
