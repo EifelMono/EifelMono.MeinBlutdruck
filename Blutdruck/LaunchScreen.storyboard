@@ -14,11 +14,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Logo" translatesAutoresizingMaskIntoConstraints="NO" id="logoBild">
-                                <rect key="frame" x="136.5" y="366" width="120" height="120"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Startlogo" translatesAutoresizingMaskIntoConstraints="NO" id="logoBild">
+                                <rect key="frame" x="86.5" y="316" width="220" height="220"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="120" id="logoBreite"/>
-                                    <constraint firstAttribute="height" constant="120" id="logoHoehe"/>
+                                    <constraint firstAttribute="width" constant="220" id="logoBreite"/>
+                                    <constraint firstAttribute="height" constant="220" id="logoHoehe"/>
                                 </constraints>
                             </imageView>
                         </subviews>
@@ -35,7 +35,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Logo" width="1024" height="1024"/>
+        <image name="Startlogo" width="1024" height="1024"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
