@@ -200,10 +200,7 @@ struct Zeitraumleiste: View {
                     Text("zuletzt")
                         .font(.caption2).foregroundStyle(.secondary)
                     Text(m.datum.formatted(.dateTime.day(.twoDigits).month(.twoDigits).hour().minute()))
-                        .font(.caption2.monospacedDigit()).foregroundStyle(.secondary)
-                    Text("\(Int(m.sys))/\(Int(m.dia))")
-                        .font(.footnote.weight(.medium).monospacedDigit())
-                        .foregroundStyle(Bewertung.fuer(sys: m.sys, dia: m.dia).farbe)
+                        .font(.footnote.monospacedDigit()).foregroundStyle(.secondary)
                 }
                 .lineLimit(1)
             }
