@@ -249,10 +249,10 @@ struct Leerzustand: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Schritt(1, "Oben rechts auf dein Profilbild tippen")
-                    Schritt(2, "„Apps und Dienste“ wählen")
+                    Schritt(2, "Im Bereich „Datenschutz“ auf „Apps“ tippen")
                     Schritt(3, "„Mein Blutdruck“ antippen")
                     Schritt(4, "Alle Schalter unter „Datenlesen erlauben“ einschalten")
-                    Schritt(5, "Zurück hierher und auf „Erneut aus Health laden“ tippen")
+                    Schritt(5, "Zurück hierher und oben auf „Health-Zugriff erlauben“ tippen")
                 }
             }
             .padding(14)
