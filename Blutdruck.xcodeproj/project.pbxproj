@@ -192,7 +192,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 51;
 				DEVELOPMENT_TEAM = B66T4RV9WF;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Blutdruck/Info.plist;
@@ -215,7 +215,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 50;
+				CURRENT_PROJECT_VERSION = 51;
 				DEVELOPMENT_TEAM = B66T4RV9WF;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Blutdruck/Info.plist;

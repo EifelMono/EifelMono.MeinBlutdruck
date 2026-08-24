@@ -6,6 +6,8 @@ import Charts
 struct Uebersicht: View {
     @EnvironmentObject var speicher: Speicher
     @EnvironmentObject var schutz: Schutz
+    // Beobachtet, damit geänderte Grenzwerte sofort überall durchschlagen
+    @EnvironmentObject var grenzwerte: Grenzwerte
 
     @State private var zeitraum: Zeitraum = .vierzehn
     @State private var darstellung: Darstellung = .einzeln
@@ -1163,6 +1165,7 @@ struct Einstellungen: View {
 
 struct Fusszeile: View {
     @EnvironmentObject var speicher: Speicher
+    @EnvironmentObject var grenzen: Grenzwerte
     @State private var zeigeHinweis = false
 
     private var version: String {
@@ -1176,7 +1179,7 @@ struct Fusszeile: View {
     var body: some View {
         VStack(spacing: 6) {
             Text("Alle Werte stammen aus der Health-App.")
-            Text("Erhöht ab \(Int(grenzeSys))/\(Int(grenzeDia)) mmHg – in den Einstellungen änderbar.")
+            Text("Erhöht ab \(Int(grenzen.sys))/\(Int(grenzen.dia)) mmHg – in den Einstellungen änderbar.")
             Button { zeigeHinweis = true } label: {
                 Label(Haftung.kurz, systemImage: "info.circle")
             }
