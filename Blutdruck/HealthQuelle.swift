@@ -75,6 +75,19 @@ final class Speicher: ObservableObject {
         }
     }
 
+    /// Vom Benutzer ausgelöst: fragt die Freigabe an und lädt danach.
+    /// Ein Tippen liefert immer den nötigen Bildschirmzusammenhang – anders als
+    /// ein Aufruf beim Start, bei dem iOS die Abfrage stillschweigend verwirft,
+    /// wenn gerade ein anderes Blatt offen ist.
+    @discardableResult
+    func zugriffAnfragen() async -> Bool {
+        print("BD: Freigabe wird angefragt")
+        let erlaubt = await erlaubnisEinholen()
+        print("BD: Anfrage beantwortet: \(erlaubt)")
+        if erlaubt { await laden() }
+        return erlaubt
+    }
+
     // MARK: Lesen
 
     func laden() async {

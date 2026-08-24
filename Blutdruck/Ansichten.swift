@@ -138,9 +138,17 @@ struct Uebersicht: View {
             // Erst nach dem Hinweis nach Health fragen: sonst konkurrieren beim ersten
             // Start zwei Dialoge, iOS zeigt nur einen – und die Health-Anfrage geht
             // verloren, wodurch die App in Health gar nicht erst auftaucht.
-            .task(id: hinweisBestaetigt) {
+            .task {
+                // Beim ersten Start wartet das Laden, bis der Hinweis weg ist.
                 guard hinweisBestaetigt else { return }
                 await neuLaden()
+            }
+            .onChange(of: hinweisZeigen) { vorher, jetzt in
+                guard vorher, !jetzt else { return }
+                Task {
+                    try? await Task.sleep(for: .milliseconds(400))  // Blatt zu Ende schließen lassen
+                    await neuLaden()
+                }
             }
             .task(id: neuladeSchluessel) {
                 guard hinweisBestaetigt else { return }
@@ -211,17 +219,33 @@ struct Leerzustand: View {
             }
 
             // Der Weg zur Freigabe: Knopf und Erklärung gehören zusammen.
-            VStack(spacing: 10) {
+            VStack(spacing: 12) {
                 Button {
-                    Ziele.oeffnen(Ziele.healthDatenzugriff)
+                    Task { await speicher.zugriffAnfragen() }
                 } label: {
-                    Label("Health-Einstellungen öffnen", systemImage: "heart.text.square")
+                    Label("Health-Zugriff erlauben", systemImage: "heart.text.square")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+                .disabled(speicher.laedt)
 
-                Text("Dort auf dein Profilbild tippen, dann „Apps und Dienste“, dann „Mein Blutdruck“ – und alles einschalten. Diesen letzten Schritt kann dir keine App abnehmen.")
+                Text("Beim ersten Mal erscheint Apples Abfrage. Wichtig: dort bis zum Abschnitt „darf Daten lesen“ nach unten scrollen und alles einschalten.")
+                    .font(.caption).foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Divider()
+
+                Button {
+                    Ziele.oeffnen(Ziele.healthDatenzugriff)
+                } label: {
+                    Label("Health-Einstellungen öffnen", systemImage: "gearshape")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+
+                Text("Kommt keine Abfrage mehr, wurde sie schon einmal beantwortet: dann dort auf dein Profilbild, „Apps und Dienste“, „Mein Blutdruck“ – und alles einschalten.")
                     .font(.caption).foregroundStyle(.secondary)
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
