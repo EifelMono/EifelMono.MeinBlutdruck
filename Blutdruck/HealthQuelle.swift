@@ -8,6 +8,9 @@ final class Speicher: ObservableObject {
     @Published var messungen: [Messung] = []
     @Published var gewicht: [Wert] = []
     @Published var koerperfett: [Wert] = []
+    @Published var pulsReihe: [Wert] = []
+    @Published var pulsHinweis = ""
+    private var pulsSchluessel = ""
     @Published var meldung = ""
     @Published var laedt = false
     @Published var healthVerfuegbar = HKHealthStore.isHealthDataAvailable()
@@ -50,6 +53,7 @@ final class Speicher: ObservableObject {
 
     func laden() async {
         laedt = true
+        pulsSchluessel = ""
         defer { laedt = false }
         print("BD: laden() gestartet, Health verfügbar: \(healthVerfuegbar)")
         guard await erlaubnisEinholen() else {
@@ -144,6 +148,35 @@ final class Speicher: ObservableObject {
         } catch {
             print("BD: FEHLER \(error)")
             meldung = "Health-Daten konnten nicht gelesen werden: \(error.localizedDescription)"
+        }
+    }
+
+    /// Pulswerte für den angezeigten Zeitraum – erst hier, weil über Jahre hinweg
+    /// leicht Hunderttausende Herzschlagwerte zusammenkommen.
+    func pulsLaden(von: Date, bis: Date) async {
+        let schluessel = "\(Int(von.timeIntervalSince1970))-\(Int(bis.timeIntervalSince1970))"
+        guard schluessel != pulsSchluessel else { return }
+        pulsSchluessel = schluessel
+
+        let tage = bis.timeIntervalSince(von) / 86400
+        guard tage <= 400 else {
+            pulsReihe = []
+            pulsHinweis = "Der Zeitraum ist zu groß für die Pulsdarstellung – bitte höchstens ein Jahr wählen."
+            return
+        }
+        do {
+            let proben = try await werteLesen(pulsTyp,
+                                              von: von.addingTimeInterval(-300),
+                                              bis: bis.addingTimeInterval(300))
+            pulsReihe = proben.map { Wert(datum: $0.startDate,
+                                          wert: $0.quantity.doubleValue(for: proMinute).rounded()) }
+            pulsHinweis = pulsReihe.isEmpty
+                ? "Für diesen Zeitraum liegen in Health keine Pulswerte vor."
+                : ""
+            print("BD: Puls im Zeitraum: \(pulsReihe.count)")
+        } catch {
+            pulsReihe = []
+            pulsHinweis = "Pulswerte konnten nicht gelesen werden."
         }
     }
 

@@ -13,6 +13,9 @@
 		A5BAF4216CB90E81379B0728 /* Auswertung.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7596095BE408E31DDB4BFB6 /* Auswertung.swift */; };
 		C64D9AF767B5773E1530DD73 /* HealthQuelle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19702170E71F1C630D2D119E /* HealthQuelle.swift */; };
 		C2BEB0A13646DB198814C495 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7466D8C936D5E57CF818B755 /* Assets.xcassets */; };
+		C5C3A25314C1E3A3BCD89C45 /* Farben.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BBC40A79F2B7C85383F405 /* Farben.swift */; };
+		1897E1CE49D7905C15328EA6 /* Sperre.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5863148E7311F344AEFDD971 /* Sperre.swift */; };
+		1D5A630F53479F15FF3CC34B /* Grenzwerte.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3004449DDA1CF2B1DD92C501 /* Grenzwerte.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +27,9 @@
 		F5BF48AA40CAD7891EB709FC /* Blutdruck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Blutdruck.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB500304391BE2803B85921A /* Ansichten.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ansichten.swift; sourceTree = "<group>"; };
 		7466D8C936D5E57CF818B755 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		88BBC40A79F2B7C85383F405 /* Farben.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Farben.swift"; sourceTree = "<group>"; };
+		5863148E7311F344AEFDD971 /* Sperre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sperre.swift"; sourceTree = "<group>"; };
+		3004449DDA1CF2B1DD92C501 /* Grenzwerte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Grenzwerte.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +55,9 @@
 			isa = PBXGroup;
 			children = (
 				81E77A370924532A35B4F297 /* BlutdruckApp.swift */,
+				88BBC40A79F2B7C85383F405 /* Farben.swift */,
+				5863148E7311F344AEFDD971 /* Sperre.swift */,
+				3004449DDA1CF2B1DD92C501 /* Grenzwerte.swift */,
 				1CE575DE9998218D260FECAB /* Modell.swift */,
 				D7596095BE408E31DDB4BFB6 /* Auswertung.swift */,
 				19702170E71F1C630D2D119E /* HealthQuelle.swift */,
@@ -136,6 +145,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+					1D5A630F53479F15FF3CC34B /* Grenzwerte.swift in Sources */,
+					1897E1CE49D7905C15328EA6 /* Sperre.swift in Sources */,
+					C5C3A25314C1E3A3BCD89C45 /* Farben.swift in Sources */,
 				7B1AD4BD374EE393D5078B33 /* BlutdruckApp.swift in Sources */,
 				89CE1071162D8EA338C8F59B /* Modell.swift in Sources */,
 				A5BAF4216CB90E81379B0728 /* Auswertung.swift in Sources */,
@@ -176,13 +188,14 @@
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = B66T4RV9WF;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Damit deine Blutdruckwerte nicht jedem offenstehen, der das Gerät in der Hand hat.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Zum Auswerten deiner Blutdruckmessungen liest die App sie aus der Health-App.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = de.klapperich.blutdruck;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -201,13 +214,14 @@
 				CODE_SIGN_IDENTITY = "-";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = B66T4RV9WF;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Damit deine Blutdruckwerte nicht jedem offenstehen, der das Gerät in der Hand hat.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Zum Auswerten deiner Blutdruckmessungen liest die App sie aus der Health-App.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = de.klapperich.blutdruck;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

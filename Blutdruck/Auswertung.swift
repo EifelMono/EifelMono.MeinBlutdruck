@@ -110,7 +110,22 @@ enum Auswertung {
                 name: a.name, spanne: a.spanne, anzahl: teil.count,
                 sys: mittel(teil.map(\.sys)) ?? 0, dia: mittel(teil.map(\.dia)) ?? 0,
                 puls: mittel(teil.compactMap(\.puls)),
-                ueberGrenze: teil.filter { $0.sys >= 135 || $0.dia >= 85 }.count)
+                ueberGrenze: teil.filter { $0.sys >= grenzeSys || $0.dia >= grenzeDia }.count)
+        }
+    }
+
+    /// Mittelwerte je Stunde – für die stündliche Ansicht der Tagesabschnitte.
+    static func stunden(_ messungen: [Messung]) -> [AbschnittsWert] {
+        (0..<24).compactMap { stunde in
+            let teil = messungen.filter { $0.minuten / 60 == stunde }
+            guard !teil.isEmpty else { return nil }
+            return AbschnittsWert(
+                name: String(format: "%02d", stunde), spanne: "\(stunde)–\(stunde + 1) Uhr",
+                anzahl: teil.count,
+                sys: mittel(teil.map(\.sys)) ?? 0, dia: mittel(teil.map(\.dia)) ?? 0,
+                puls: mittel(teil.compactMap(\.puls)),
+                ueberGrenze: teil.filter { $0.sys >= grenzeSys || $0.dia >= grenzeDia }.count,
+                stunde: stunde)
         }
     }
 

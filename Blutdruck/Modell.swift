@@ -25,10 +25,10 @@ enum Bewertung: String {
     case deutlich = "deutlich erhöht", sehrHoch = "sehr hoch"
 
     static func fuer(sys: Double, dia: Double) -> Bewertung {
-        if sys >= 180 || dia >= 110 { return .sehrHoch }
-        if sys >= 160 || dia >= 100 { return .deutlich }
-        if sys >= 135 || dia >= 85  { return .erhoeht }
-        if sys < 105  || dia < 65   { return .niedrig }
+        if sys >= grenzeSys + 45 || dia >= grenzeDia + 25 { return .sehrHoch }
+        if sys >= grenzeSys + 25 || dia >= grenzeDia + 15 { return .deutlich }
+        if sys >= grenzeSys || dia >= grenzeDia { return .erhoeht }
+        if sys < 105 || dia < 65 { return .niedrig }
         return .normal
     }
 }
@@ -64,6 +64,13 @@ struct AbschnittsWert: Identifiable {
     let sys: Double, dia: Double
     let puls: Double?
     let ueberGrenze: Int
+    var stunde: Int? = nil
+}
+
+enum Aufteilung: String, CaseIterable, Identifiable {
+    case abschnitte = "Tagesabschnitte"
+    case stuendlich = "Stündlich"
+    var id: String { rawValue }
 }
 
 
