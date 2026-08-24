@@ -539,12 +539,8 @@ struct Legende: View {
     /// Kurzformen, damit die Legende auch bei fünf Einträgen in eine Zeile passt.
     private func kurz(_ name: String) -> String {
         switch name {
-        case "Systolisch":    return "Sys"
-        case "Diastolisch":   return "Dia"
-        case "Ø Systolisch":  return "Ø Sys"
-        case "Ø Diastolisch": return "Ø Dia"
-        case "Körperfett":    return "Fett"
-        default:              return name
+        case "Körperfett": return "Fett"
+        default:           return name
         }
     }
 
@@ -567,6 +563,7 @@ struct Legende: View {
         ViewThatFits(in: .horizontal) {
             zeile(kurzform: false)
             zeile(kurzform: true)
+            zeile(kurzform: false, klein: true)
             zeile(kurzform: true, klein: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -580,9 +577,9 @@ struct Detailkarte: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(messung.datum.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute()))
                 .font(.caption).foregroundStyle(.secondary)
-            HStack(spacing: 12) {
-                Beschriftet(farbe: .sysFarbe, name: "Sys", wert: "\(Int(messung.sys))")
-                Beschriftet(farbe: .diaFarbe, name: "Dia", wert: "\(Int(messung.dia))")
+            HStack(spacing: 10) {
+                Beschriftet(farbe: .sysFarbe, name: "Systolisch", wert: "\(Int(messung.sys))")
+                Beschriftet(farbe: .diaFarbe, name: "Diastolisch", wert: "\(Int(messung.dia))")
                 if let p = messung.puls { Beschriftet(farbe: .pulsFarbe, name: "Puls", wert: "\(Int(p))") }
             }
             HStack(spacing: 6) {
@@ -608,6 +605,7 @@ struct Beschriftet: View {
         HStack(spacing: 4) {
             Circle().fill(farbe).frame(width: 8, height: 8)
             Text(name).font(.caption).foregroundStyle(.secondary)
+                .lineLimit(1).minimumScaleFactor(0.8)
             Text(wert).font(.subheadline.bold())
         }
     }
