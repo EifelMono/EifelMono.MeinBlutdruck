@@ -1011,7 +1011,9 @@ struct Einstellungen: View {
             Form {
                 Section {
                     NavigationLink {
-                        Haftungshinweis()
+                        Hinweisinhalt()
+                            .navigationTitle("Wichtiger Hinweis")
+                            .navigationBarTitleDisplayMode(.inline)
                     } label: {
                         Label("Wichtiger Hinweis zur Nutzung", systemImage: "exclamationmark.triangle")
                     }

@@ -33,57 +33,68 @@ enum Haftung {
     """
 }
 
-struct Haftungshinweis: View {
+/// Der reine Inhalt – wird eingeschoben (Einstellungen) oder als Blatt gezeigt.
+struct Hinweisinhalt: View {
     @AppStorage("hinweisBestaetigt") private var bestaetigt = false
+    /// true = beim ersten Start, dann ist zu bestätigen
+    var erstmalig = false
+    var fertig: () -> Void = {}
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Label("Bitte einmal lesen", systemImage: "exclamationmark.triangle.fill")
+                    .font(.headline).foregroundStyle(Color.statusErhoeht)
+
+                Text(Haftung.kernsatz)
+                    .font(.callout.weight(.medium))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(12)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.statusErhoeht.opacity(0.10),
+                                in: RoundedRectangle(cornerRadius: 10))
+                    .overlay(RoundedRectangle(cornerRadius: 10)
+                        .strokeBorder(Color.statusErhoeht.opacity(0.35)))
+
+                Text(.init(Haftung.lang))
+                    .font(.callout)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if erstmalig {
+                    Button {
+                        bestaetigt = true
+                        fertig()
+                    } label: {
+                        Text("Verstanden").frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .padding(.top, 6)
+                }
+            }
+            .padding(20)
+        }
+    }
+}
+
+/// Als Blatt: eigene Navigationsleiste mit Kopfzeile.
+struct Haftungshinweis: View {
     @Environment(\.dismiss) private var schliessen
-    /// true = beim ersten Start, mit Bestätigungsknopf
     var erstmalig = false
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    Label("Bitte einmal lesen", systemImage: "exclamationmark.triangle.fill")
-                        .font(.headline).foregroundStyle(Color.statusErhoeht)
-
-                    Text(Haftung.kernsatz)
-                        .font(.callout.weight(.medium))
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(12)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(Color.statusErhoeht.opacity(0.10),
-                                    in: RoundedRectangle(cornerRadius: 10))
-                        .overlay(RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(Color.statusErhoeht.opacity(0.35)))
-                    Text(.init(Haftung.lang))
-                        .font(.callout)
-                        .fixedSize(horizontal: false, vertical: true)
-                    if erstmalig {
-                        Button {
-                            bestaetigt = true
-                            schliessen()
-                        } label: {
-                            Text("Verstanden").frame(maxWidth: .infinity)
+            Hinweisinhalt(erstmalig: erstmalig, fertig: { schliessen() })
+                .navigationBarTitleDisplayMode(.inline)
+                .interactiveDismissDisabled(erstmalig)
+                .toolbar {
+                    ToolbarItem(placement: .principal) { Kopfzeile(unterzeile: "Wichtiger Hinweis") }
+                    if !erstmalig {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Fertig") { schliessen() }
                         }
-                        .buttonStyle(.borderedProminent)
-                        .controlSize(.large)
-                        .padding(.top, 6)
                     }
                 }
-                .padding(20)
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) { Kopfzeile(unterzeile: "Wichtiger Hinweis") }
-            }
-            .interactiveDismissDisabled(erstmalig)
-            .toolbar {
-                if !erstmalig {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Fertig") { schliessen() }
-                    }
-                }
-            }
         }
     }
 }
