@@ -1019,10 +1019,12 @@ struct Einstellungen: View {
                     Text(Haftung.kurz)
                 }
 
-                Section("Schutz") {
+                Section {
                     Toggle("Beim Öffnen sperren", isOn: $schutz.aktiv)
-                    Text("Die Werte werden erst nach \(schutz.verfahren) angezeigt. Beim Wechsel in den Hintergrund sperrt die App wieder.")
-                        .font(.caption).foregroundStyle(.secondary)
+                } header: {
+                    Text("Schutz")
+                } footer: {
+                    Text("Aus. Eingeschaltet werden die Werte erst nach \(schutz.verfahren) angezeigt, und beim Wechsel in den Hintergrund sperrt die App wieder.")
                 }
                 Section {
                     Stepper(value: $grenzen.sys, in: 110...180, step: 5) {

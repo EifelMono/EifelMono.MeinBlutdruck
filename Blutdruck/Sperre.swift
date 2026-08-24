@@ -5,10 +5,16 @@ import LocalAuthentication
 @MainActor
 final class Schutz: ObservableObject {
 
-    @Published var entsperrt = false
+    @Published var entsperrt: Bool
     @Published var fehler = ""
-    @AppStorage("sperreAktiv") var aktiv = true {
+    /// Standardmäßig aus – wer den Schutz möchte, schaltet ihn in den Einstellungen ein.
+    @AppStorage("sperreAktiv") var aktiv = false {
         didSet { if !aktiv { entsperrt = true } }
+    }
+
+    init() {
+        // Ohne Sperre gleich offen, damit beim Start nichts aufblitzt.
+        entsperrt = !(UserDefaults.standard.object(forKey: "sperreAktiv") as? Bool ?? false)
     }
 
     var verfahren: String {
