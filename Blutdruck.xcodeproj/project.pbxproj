@@ -1,0 +1,262 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		7B1AD4BD374EE393D5078B33 /* BlutdruckApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81E77A370924532A35B4F297 /* BlutdruckApp.swift */; };
+		89CE1071162D8EA338C8F59B /* Modell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CE575DE9998218D260FECAB /* Modell.swift */; };
+		921CF0758AFC3E2E6B70C88B /* Ansichten.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB500304391BE2803B85921A /* Ansichten.swift */; };
+		A5BAF4216CB90E81379B0728 /* Auswertung.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7596095BE408E31DDB4BFB6 /* Auswertung.swift */; };
+		C64D9AF767B5773E1530DD73 /* HealthQuelle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19702170E71F1C630D2D119E /* HealthQuelle.swift */; };
+		C2BEB0A13646DB198814C495 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7466D8C936D5E57CF818B755 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		19702170E71F1C630D2D119E /* HealthQuelle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthQuelle.swift; sourceTree = "<group>"; };
+		1CE575DE9998218D260FECAB /* Modell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Modell.swift; sourceTree = "<group>"; };
+		81E77A370924532A35B4F297 /* BlutdruckApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlutdruckApp.swift; sourceTree = "<group>"; };
+		86B3BC083DF59791BE56CFAE /* Blutdruck.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Blutdruck.entitlements; sourceTree = "<group>"; };
+		D7596095BE408E31DDB4BFB6 /* Auswertung.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auswertung.swift; sourceTree = "<group>"; };
+		F5BF48AA40CAD7891EB709FC /* Blutdruck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Blutdruck.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB500304391BE2803B85921A /* Ansichten.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ansichten.swift; sourceTree = "<group>"; };
+		7466D8C936D5E57CF818B755 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8FD712CB9DF176001FAF75A5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C5F7D58099E4A870CE2C78DC = {
+			isa = PBXGroup;
+			children = (
+				F9029FADA4943D72A5210AA0 /* Blutdruck */,
+				FF87AB783B150FC2F9C51044 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F9029FADA4943D72A5210AA0 /* Blutdruck */ = {
+			isa = PBXGroup;
+			children = (
+				81E77A370924532A35B4F297 /* BlutdruckApp.swift */,
+				1CE575DE9998218D260FECAB /* Modell.swift */,
+				D7596095BE408E31DDB4BFB6 /* Auswertung.swift */,
+				19702170E71F1C630D2D119E /* HealthQuelle.swift */,
+				FB500304391BE2803B85921A /* Ansichten.swift */,
+				7466D8C936D5E57CF818B755 /* Assets.xcassets */,
+				86B3BC083DF59791BE56CFAE /* Blutdruck.entitlements */,
+			);
+			path = Blutdruck;
+			sourceTree = "<group>";
+		};
+		FF87AB783B150FC2F9C51044 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F5BF48AA40CAD7891EB709FC /* Blutdruck.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		42AEFBAE01D2DFD981F7DA7D /* Blutdruck */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 03733BEC4393505A73612804 /* Build configuration list for PBXNativeTarget "Blutdruck" */;
+			buildPhases = (
+				47FB6E1697AB2EF2F3DBAD46 /* Sources */,
+				8FD712CB9DF176001FAF75A5 /* Frameworks */,
+				80AC1B9B294EAEA0EE94013F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Blutdruck;
+			productName = Blutdruck;
+			productReference = F5BF48AA40CAD7891EB709FC /* Blutdruck.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		46F86FAA6BBF9AC94A7E4595 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					42AEFBAE01D2DFD981F7DA7D = {
+						CreatedOnToolsVersion = 16.2;
+					};
+				};
+			};
+			buildConfigurationList = D21051CA55C4951578649475 /* Build configuration list for PBXProject "Blutdruck" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C5F7D58099E4A870CE2C78DC;
+			productRefGroup = FF87AB783B150FC2F9C51044 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				42AEFBAE01D2DFD981F7DA7D /* Blutdruck */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		80AC1B9B294EAEA0EE94013F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+					C2BEB0A13646DB198814C495 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		47FB6E1697AB2EF2F3DBAD46 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7B1AD4BD374EE393D5078B33 /* BlutdruckApp.swift in Sources */,
+				89CE1071162D8EA338C8F59B /* Modell.swift in Sources */,
+				A5BAF4216CB90E81379B0728 /* Auswertung.swift in Sources */,
+				C64D9AF767B5773E1530DD73 /* HealthQuelle.swift in Sources */,
+				921CF0758AFC3E2E6B70C88B /* Ansichten.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		551A5B0ADEC783E2D8698029 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		6B264B089E7711AA75DEFFB8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = NO;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_ENTITLEMENTS = Blutdruck/Blutdruck.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = B66T4RV9WF;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Zum Auswerten deiner Blutdruckmessungen liest die App sie aus der Health-App.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = de.klapperich.blutdruck;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		A3B59C2310877C1BDE6BDBFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = NO;
+				CODE_SIGNING_ALLOWED = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_ENTITLEMENTS = Blutdruck/Blutdruck.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
+				DEVELOPMENT_TEAM = B66T4RV9WF;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "Zum Auswerten deiner Blutdruckmessungen liest die App sie aus der Health-App.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = de.klapperich.blutdruck;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		B65B76BDDA8B3682A4C04E5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		03733BEC4393505A73612804 /* Build configuration list for PBXNativeTarget "Blutdruck" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A3B59C2310877C1BDE6BDBFC /* Debug */,
+				6B264B089E7711AA75DEFFB8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D21051CA55C4951578649475 /* Build configuration list for PBXProject "Blutdruck" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B65B76BDDA8B3682A4C04E5F /* Debug */,
+				551A5B0ADEC783E2D8698029 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+}
