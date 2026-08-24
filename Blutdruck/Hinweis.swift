@@ -35,11 +35,6 @@ enum Haftung {
 
 /// Der reine Inhalt – wird eingeschoben (Einstellungen) oder als Blatt gezeigt.
 struct Hinweisinhalt: View {
-    @AppStorage("hinweisBestaetigt") private var bestaetigt = false
-    /// true = beim ersten Start, dann ist zu bestätigen
-    var erstmalig = false
-    var fertig: () -> Void = {}
-
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -60,17 +55,6 @@ struct Hinweisinhalt: View {
                     .font(.callout)
                     .fixedSize(horizontal: false, vertical: true)
 
-                if erstmalig {
-                    Button {
-                        bestaetigt = true
-                        fertig()
-                    } label: {
-                        Text("Verstanden").frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
-                    .padding(.top, 6)
-                }
             }
             .padding(20)
         }
@@ -80,19 +64,22 @@ struct Hinweisinhalt: View {
 /// Als Blatt: eigene Navigationsleiste mit Kopfzeile.
 struct Haftungshinweis: View {
     @Environment(\.dismiss) private var schliessen
+    @AppStorage("hinweisBestaetigt") private var bestaetigt = false
     var erstmalig = false
 
     var body: some View {
         NavigationStack {
-            Hinweisinhalt(erstmalig: erstmalig, fertig: { schliessen() })
+            Hinweisinhalt()
                 .navigationBarTitleDisplayMode(.inline)
                 .interactiveDismissDisabled(erstmalig)
                 .toolbar {
                     ToolbarItem(placement: .principal) { Kopfzeile(unterzeile: "Wichtiger Hinweis") }
-                    if !erstmalig {
-                        ToolbarItem(placement: .confirmationAction) {
-                            Button("Fertig") { schliessen() }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button(erstmalig ? "Verstanden" : "Fertig") {
+                            if erstmalig { bestaetigt = true }
+                            schliessen()
                         }
+                        .fontWeight(erstmalig ? .semibold : .regular)
                     }
                 }
         }
