@@ -18,9 +18,11 @@ Auswertung trotzdem vollständig sichtbar ist, gibt es Beispieldaten:
 
 1. App starten, den Hinweis mit „Verstanden" bestätigen.
 2. Die Frage nach dem Health-Zugriff kann abgelehnt werden.
-3. Auf dem leeren Bildschirm: „Erst einmal Beispieldaten ansehen".
-   Alternativ: Zahnrad oben links → Abschnitt „Ausprobieren" →
-   „Beispieldaten anzeigen" einschalten.
+3. Auf dem leeren Bildschirm steht gleich unter dem blauen Knopf ein zweiter,
+   magentafarbener: „Beispieldaten ansehen".
+   Alternativ jederzeit: Zahnrad oben links → Abschnitt „Ausprobieren" →
+   „Beispieldaten anzeigen" einschalten. Im selben Bildschirm liegt darüber der
+   Abschnitt „Health" mit „Erneut aus Health laden" und „Health-App öffnen".
 
 Solange Beispieldaten angezeigt werden, steht am oberen Rand ein Streifen
 „Beispieldaten – erfundene Werte"; „Beenden" schaltet zurück auf die
@@ -48,9 +50,11 @@ without any data, use the built-in sample data:
 
 1. Launch the app, confirm the notice with "Verstanden" (Understood).
 2. The Health permission prompt may be declined.
-3. On the empty screen tap "Erst einmal Beispieldaten ansehen"
-   (Show sample data first). Alternatively: gear icon, top left →
-   section "Ausprobieren" → toggle "Beispieldaten anzeigen".
+3. On the empty screen, right below the blue button, tap the magenta button
+   "Beispieldaten ansehen" (show sample data).
+   Alternatively, at any time: gear icon, top left → section "Ausprobieren" →
+   toggle "Beispieldaten anzeigen". The section "Health" above it holds
+   "Erneut aus Health laden" (reload) and "Health-App öffnen" (open Health).
 
 While sample data is shown, a banner at the top of the screen says
 "Beispieldaten" (sample data); "Beenden" (stop) switches back to Health data.

@@ -307,6 +307,24 @@ struct Leerzustand: View {
                     .font(.caption).foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
+
+                // Wer keine eigenen Werte hat – auch die App-Prüfung – sieht sonst
+                // nie, was die App eigentlich anzeigt.
+                Button {
+                    Task { await speicher.beispieleZeigen(true) }
+                } label: {
+                    Label("Beispieldaten ansehen", systemImage: "testtube.2")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+                .tint(Color.beispielFarbe)
+                .padding(.top, 6)
+
+                Text("Zeigt die Auswertung mit erfundenen Werten. Jederzeit oben im Streifen zu beenden.")
+                    .font(.caption).foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             VStack(spacing: 10) {
@@ -333,11 +351,6 @@ struct Leerzustand: View {
             }
             .padding(14)
             .background(.background.secondary, in: RoundedRectangle(cornerRadius: 14))
-
-            Button("Erst einmal Beispieldaten ansehen") {
-                Task { await speicher.beispieleZeigen(true) }
-            }
-            .font(.footnote)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 30)
@@ -1153,6 +1166,34 @@ struct Einstellungen: View {
                     }
                 } footer: {
                     Text(Haftung.kurz)
+                }
+
+                Section {
+                    LabeledContent("Gelesene Messungen") {
+                        Text(speicher.beispielModus ? "Beispieldaten"
+                                                    : "\(speicher.messungen.count)")
+                            .foregroundStyle(.secondary)
+                    }
+                    Button {
+                        Task { await speicher.zugriffAnfragen() }
+                    } label: {
+                        Label("Erneut aus Health laden", systemImage: "arrow.clockwise")
+                    }
+                    .disabled(speicher.laedt || speicher.beispielModus)
+
+                    Button {
+                        Ziele.oeffnen(Ziele.healthDatenzugriff)
+                    } label: {
+                        Label("Health-App öffnen", systemImage: "arrow.up.forward.app")
+                    }
+                } header: {
+                    Text("Health")
+                } footer: {
+                    // Ohne diesen Weg kommt niemand mehr an die Freigabe heran,
+                    // sobald einmal etwas angezeigt wird und der leere Zustand ausbleibt.
+                    Text(speicher.beispielModus
+                         ? "Solange Beispieldaten angezeigt werden, liest die App nichts aus Health. Dazu oben den Streifen „Beispieldaten“ beenden oder den Schalter unten ausschalten."
+                         : "Fehlen Werte, sind die Schalter in Health vermutlich aus: Health-App öffnen → Profilbild oben rechts → Datenschutz → Apps → „Mein Blutdruck“ → alle Schalter unter „Datenlesen erlauben“ einschalten. Danach hier erneut laden.")
                 }
 
                 Section {
