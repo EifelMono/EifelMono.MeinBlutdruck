@@ -151,7 +151,7 @@ struct Uebersicht: View {
             // verloren, wodurch die App in Health gar nicht erst auftaucht.
             .task {
                 // Beim ersten Start wartet das Laden, bis der Hinweis weg ist.
-                guard hinweisBestaetigt else { return }
+                guard hinweisBestaetigt, !speicher.beispielModus else { return }
                 await neuLaden()
             }
             .onChange(of: hinweisZeigen) { vorher, jetzt in
@@ -295,6 +295,11 @@ struct Leerzustand: View {
             }
             .padding(14)
             .background(.background.secondary, in: RoundedRectangle(cornerRadius: 14))
+
+            Button("Erst einmal Beispieldaten ansehen") {
+                Task { await speicher.beispieleZeigen(true) }
+            }
+            .font(.footnote)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 30)
@@ -1105,6 +1110,16 @@ struct Einstellungen: View {
                     }
                 } footer: {
                     Text(Haftung.kurz)
+                }
+
+                Section {
+                    Toggle("Beispieldaten anzeigen", isOn: Binding(
+                        get: { speicher.beispielModus },
+                        set: { an in Task { await speicher.beispieleZeigen(an) } }))
+                } header: {
+                    Text("Ausprobieren")
+                } footer: {
+                    Text("Zeigt erfundene Werte, um die Auswertung ohne eigene Messungen anzusehen. Ausgeschaltet werden wieder die Werte aus der Health-App geladen.")
                 }
 
                 Section {

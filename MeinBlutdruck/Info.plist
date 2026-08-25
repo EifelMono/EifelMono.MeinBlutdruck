@@ -26,6 +26,8 @@
 	<string>Zum Auswerten deiner Blutdruckmessungen liest die App sie aus der Health-App.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Damit deine Blutdruckwerte nicht jedem offenstehen, der das Gerät in der Hand hat.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIImageName</key>

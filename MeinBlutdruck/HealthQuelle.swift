@@ -14,6 +14,8 @@ final class Speicher: ObservableObject {
     @Published var pulsBand: [Bandwert] = []
     @Published var pulsProTag: [Wert] = []
     @Published var pulsAnzahl = 0
+    /// Zeigt erfundene Werte statt der Health-Daten – für Bildschirmfotos und die App-Prüfung.
+    @Published var beispielModus = false
     /// Sichtbares Protokoll – damit sich ein Problem am Gerät ablesen lässt.
     @Published var protokoll: [String] = []
 
@@ -30,6 +32,23 @@ final class Speicher: ObservableObject {
     @Published var healthVerfuegbar = HKHealthStore.isHealthDataAvailable()
 
     private let store = HKHealthStore()
+
+    init() {
+        // Für Bildschirmfotos: mit "-Beispieldaten" starten, dann kommt die App
+        // ohne Health-Abfrage gleich mit erfundenen Werten hoch.
+        if ProcessInfo.processInfo.arguments.contains("-Beispieldaten") {
+            beispielModus = true
+            let satz = Beispieldaten.erzeugen()
+            messungen = satz.messungen
+            gewicht = satz.gewicht
+            koerperfett = satz.koerperfett
+            pulsBand = satz.puls
+            pulsProTag = Auswertung.proTag(satz.messungen.compactMap { m in
+                m.puls.map { p in Wert(datum: m.datum, wert: p) } })
+            pulsAnzahl = satz.messungen.compactMap(\.puls).count
+            gelesen = (satz.messungen.count, satz.messungen.count, pulsAnzahl)
+        }
+    }
 
     /// Wie viele Einzelproben Health zurückgegeben hat – hilft beim Eingrenzen von Problemen.
     @Published var gelesen: (sys: Int, dia: Int, puls: Int) = (0, 0, 0)
@@ -123,7 +142,32 @@ final class Speicher: ObservableObject {
 
     // MARK: Lesen
 
+    /// Schaltet auf erfundene Werte um oder zurück auf Health.
+    func beispieleZeigen(_ an: Bool) async {
+        beispielModus = an
+        if an {
+            let satz = Beispieldaten.erzeugen()
+            messungen = satz.messungen
+            gewicht = satz.gewicht
+            koerperfett = satz.koerperfett
+            pulsBand = satz.puls
+            pulsProTag = Auswertung.proTag(satz.messungen.compactMap { m in
+                m.puls.map { p in Wert(datum: m.datum, wert: p) } })
+            pulsReihe = []
+            pulsAnzahl = satz.messungen.compactMap(\.puls).count
+            gelesen = (satz.messungen.count, satz.messungen.count, pulsAnzahl)
+            meldung = "Beispieldaten – keine echten Messwerte"
+            notiz("Beispieldaten angezeigt: \(satz.messungen.count) Messungen")
+        } else {
+            messungen = []; gewicht = []; koerperfett = []
+            pulsBand = []; pulsProTag = []; pulsReihe = []; pulsAnzahl = 0
+            gelesen = (0, 0, 0); meldung = ""
+            await laden()
+        }
+    }
+
     func laden() async {
+        guard !beispielModus else { return }
         laedt = true
         pulsSchluessel = ""
         defer { laedt = false }
@@ -226,6 +270,7 @@ final class Speicher: ObservableObject {
     /// Pulswerte für den angezeigten Zeitraum – erst hier, weil über Jahre hinweg
     /// leicht Hunderttausende Herzschlagwerte zusammenkommen.
     func pulsLaden(von: Date, bis: Date) async {
+        guard !beispielModus else { return }
         let schluessel = "\(Int(von.timeIntervalSince1970))-\(Int(bis.timeIntervalSince1970))"
         guard schluessel != pulsSchluessel else { return }
         pulsSchluessel = schluessel
