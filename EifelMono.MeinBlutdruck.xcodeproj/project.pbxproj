@@ -19,6 +19,7 @@
 		E6CD0BD63798894C47032817 /* Hinweis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A12A1C1EA6796A05708A8AF /* Hinweis.swift */; };
 		EA7AF28B539C6956B02ABD64 /* Bericht.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFDBCF3E2E7B019170127DE7 /* Bericht.swift */; };
 		7C2F77963778CEA2EB1C0B0A /* Beispieldaten.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE16345E94F52D6ED3911DB /* Beispieldaten.swift */; };
+		B73B59914765FB590255D3C0 /* Datenschutz.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96A8CF6770965E7EAF61A2CC /* Datenschutz.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		3A12A1C1EA6796A05708A8AF /* Hinweis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Hinweis.swift"; sourceTree = "<group>"; };
 		FFDBCF3E2E7B019170127DE7 /* Bericht.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bericht.swift"; sourceTree = "<group>"; };
 		DCE16345E94F52D6ED3911DB /* Beispieldaten.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Beispieldaten.swift"; sourceTree = "<group>"; };
+		96A8CF6770965E7EAF61A2CC /* Datenschutz.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Datenschutz.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +69,7 @@
 				3A12A1C1EA6796A05708A8AF /* Hinweis.swift */,
 				FFDBCF3E2E7B019170127DE7 /* Bericht.swift */,
 				DCE16345E94F52D6ED3911DB /* Beispieldaten.swift */,
+				96A8CF6770965E7EAF61A2CC /* Datenschutz.swift */,
 				1CE575DE9998218D260FECAB /* Modell.swift */,
 				D7596095BE408E31DDB4BFB6 /* Auswertung.swift */,
 				19702170E71F1C630D2D119E /* HealthQuelle.swift */,
@@ -154,6 +157,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+					B73B59914765FB590255D3C0 /* Datenschutz.swift in Sources */,
 					7C2F77963778CEA2EB1C0B0A /* Beispieldaten.swift in Sources */,
 					EA7AF28B539C6956B02ABD64 /* Bericht.swift in Sources */,
 					E6CD0BD63798894C47032817 /* Hinweis.swift in Sources */,
@@ -201,7 +205,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = MeinBlutdruck/Info.plist;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = de.klapperich.blutdruck;
+				PRODUCT_BUNDLE_IDENTIFIER = de.klapperich.meinblutdruck;
 				PRODUCT_NAME = "Mein Blutdruck";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -224,7 +228,7 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = MeinBlutdruck/Info.plist;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = de.klapperich.blutdruck;
+				PRODUCT_BUNDLE_IDENTIFIER = de.klapperich.meinblutdruck;
 				PRODUCT_NAME = "Mein Blutdruck";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;

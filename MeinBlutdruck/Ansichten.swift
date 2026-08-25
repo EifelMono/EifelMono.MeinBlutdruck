@@ -1108,6 +1108,11 @@ struct Einstellungen: View {
                     } label: {
                         Label("Wichtiger Hinweis zur Nutzung", systemImage: "exclamationmark.triangle")
                     }
+                    NavigationLink {
+                        Datenschutzseite()
+                    } label: {
+                        Label("Datenschutz", systemImage: "hand.raised")
+                    }
                 } footer: {
                     Text(Haftung.kurz)
                 }
