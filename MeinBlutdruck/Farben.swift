@@ -21,6 +21,10 @@ extension Color {
     static let gewichtFarbe = Color(hell: 0x1BAF7A, dunkel: 0x2ECC96)   // Aqua
     static let fettFarbe    = Color(hell: 0x5F6570, dunkel: 0xA8ADB6)   // Graphit, bewusst neutral
 
+    // Hinweis auf Beispieldaten – bewusst weder Mess- noch Bewertungsfarbe,
+    // damit der Streifen nie mit einer Aussage über Werte verwechselt wird.
+    static let beispielFarbe = Color(hell: 0xA6367F, dunkel: 0xE07AB9)   // Magenta
+
     // Bewertungen – ausschließlich für Text und kleine Zeichen
     static let statusGut      = Color(hell: 0x0A7D0A, dunkel: 0x0CA30C)
     static let statusErhoeht  = Color(hell: 0xC2551F, dunkel: 0xEC835A)

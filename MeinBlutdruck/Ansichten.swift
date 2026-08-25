@@ -99,11 +99,18 @@ struct Uebersicht: View {
                 }
                 .refreshable { await neuLaden() }
                 .safeAreaInset(edge: .top, spacing: 0) {
-                    // Nur beim Blättern – oben steht der Zeitraum ohnehin in der Steuerung.
-                    if !obenAngekommen && !speicher.messungen.isEmpty {
-                        Zeitraumleiste(text: zeitraumText,
-                                       letzte: gefiltert.max(by: { $0.datum < $1.datum }))
-                            .transition(.move(edge: .top).combined(with: .opacity))
+                    VStack(spacing: 0) {
+                        // Solange erfundene Werte angezeigt werden, muss das immer
+                        // sichtbar sein – nicht nur in den Einstellungen.
+                        if speicher.beispielModus {
+                            Beispielleiste { Task { await speicher.beispieleZeigen(false) } }
+                        }
+                        // Nur beim Blättern – oben steht der Zeitraum ohnehin in der Steuerung.
+                        if !obenAngekommen && !speicher.messungen.isEmpty {
+                            Zeitraumleiste(text: zeitraumText,
+                                           letzte: gefiltert.max(by: { $0.datum < $1.datum }))
+                                .transition(.move(edge: .top).combined(with: .opacity))
+                        }
                     }
                 }
                 .animation(.easeInOut(duration: 0.2), value: geblaettert)
@@ -193,7 +200,8 @@ struct Uebersicht: View {
                                       gewicht: imZeitraum(speicher.gewicht),
                                       fett: imZeitraum(speicher.koerperfett),
                                       zeitraum: zeitraumText,
-                                      darstellung: darstellung)
+                                      darstellung: darstellung,
+                                      beispiel: speicher.beispielModus)
             pdfLaeuft = false
         }
     }
@@ -208,6 +216,36 @@ struct Uebersicht: View {
 }
 
 /// Zeigt dauerhaft, welcher Zeitraum gerade ausgewertet wird – beim Blättern hervorgehoben.
+/// Dauerhafter Streifen, solange die App erfundene Werte zeigt. Ohne ihn hält
+/// man die Zahlen nach ein paar Minuten für die eigenen.
+struct Beispielleiste: View {
+    let beenden: () -> Void
+
+    var body: some View {
+        HStack(spacing: 9) {
+            Image(systemName: "testtube.2")
+                .font(.footnote.weight(.semibold))
+            VStack(alignment: .leading, spacing: 1) {
+                Text("Beispieldaten").font(.footnote.weight(.semibold))
+                Text("Erfundene Werte – nicht deine Messungen")
+                    .font(.caption2).foregroundStyle(.secondary)
+            }
+            Spacer(minLength: 8)
+            Button("Beenden", action: beenden)
+                .font(.footnote.weight(.semibold))
+                .buttonStyle(.plain)
+                .foregroundStyle(Color.beispielFarbe)
+        }
+        .foregroundStyle(Color.beispielFarbe)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 7)
+        .frame(maxWidth: .infinity)
+        .background { Color.beispielFarbe.opacity(0.13).background(.bar) }
+        .overlay(alignment: .bottom) { Divider() }
+        .accessibilityElement(children: .contain)
+    }
+}
+
 struct Zeitraumleiste: View {
     let text: String
     var letzte: Messung? = nil

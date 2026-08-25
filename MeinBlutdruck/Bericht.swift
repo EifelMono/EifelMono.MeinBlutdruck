@@ -10,7 +10,7 @@ enum PDFBericht {
     @MainActor
     static func erzeugen(messungen: [Messung], punkte: [Messung], puls: [Bandwert],
                          gewicht: [Wert], fett: [Wert], zeitraum: String,
-                         darstellung: Darstellung) -> URL? {
+                         darstellung: Darstellung, beispiel: Bool = false) -> URL? {
         // Der Bericht folgt den Einstellungen – das steht im Kopf, damit später
         // nachvollziehbar bleibt, wie die Zahlen zustande kamen.
         let einstellung = "\(darstellung.rawValue) · erhöht ab \(Int(grenzeSys))/\(Int(grenzeDia)) mmHg"
@@ -18,13 +18,14 @@ enum PDFBericht {
         let seiten: [AnyView] = [
             AnyView(SeiteEins(messungen: messungen, punkte: punkte, puls: puls,
                               gewicht: gewicht, fett: fett, zeitraum: zeitraum,
-                              einstellung: einstellung)),
+                              einstellung: einstellung, beispiel: beispiel)),
             AnyView(SeiteZwei(tage: Auswertung.proTag(messungen), zeitraum: zeitraum,
-                              einstellung: einstellung)),
+                              einstellung: einstellung, beispiel: beispiel)),
         ]
 
         let ordner = FileManager.default.temporaryDirectory
-        let ziel = ordner.appending(path: "Blutdruck-Bericht.pdf")
+        let ziel = ordner.appending(path: beispiel ? "Blutdruck-Bericht-Beispieldaten.pdf"
+                                                   : "Blutdruck-Bericht.pdf")
         var rahmen = CGRect(x: 0, y: 0, width: breite, height: hoehe)
         guard let ctx = CGContext(ziel as CFURL, mediaBox: &rahmen, nil) else { return nil }
 
@@ -52,6 +53,7 @@ private struct SeiteEins: View {
     let fett: [Wert]
     let zeitraum: String
     let einstellung: String
+    var beispiel = false
 
     var body: some View {
         let gueltig = messungen.filter { !$0.ausreisser }
@@ -61,7 +63,7 @@ private struct SeiteEins: View {
         let bewertung = Bewertung.fuer(sys: sys, dia: dia)
 
         VStack(alignment: .leading, spacing: 16) {
-            Kopf(zeitraum: zeitraum, einstellung: einstellung, seite: 1)
+            Kopf(zeitraum: zeitraum, einstellung: einstellung, seite: 1, beispiel: beispiel)
 
             HStack(spacing: 10) {
                 Feld(titel: "Ø Blutdruck", wert: "\(Int(sys.rounded()))/\(Int(dia.rounded()))",
@@ -154,7 +156,7 @@ private struct SeiteEins: View {
             }
 
             Spacer()
-            Fuss()
+            Fuss(beispiel: beispiel)
         }
         .padding(36)
         .frame(width: PDFBericht.breite, height: PDFBericht.hoehe)
@@ -169,10 +171,11 @@ private struct SeiteZwei: View {
     let tage: [Messung]
     let zeitraum: String
     let einstellung: String
+    var beispiel = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Kopf(zeitraum: zeitraum, einstellung: einstellung, seite: 2)
+            Kopf(zeitraum: zeitraum, einstellung: einstellung, seite: 2, beispiel: beispiel)
             Ueberschrift("Mittelwerte je Tag")
 
             HStack {
@@ -205,7 +208,7 @@ private struct SeiteZwei: View {
             }
 
             Spacer()
-            Fuss()
+            Fuss(beispiel: beispiel)
         }
         .padding(36)
         .frame(width: PDFBericht.breite, height: PDFBericht.hoehe)
@@ -220,6 +223,7 @@ private struct Kopf: View {
     let zeitraum: String
     let einstellung: String
     let seite: Int
+    var beispiel = false
 
     private var fassung: String {
         let i = Bundle.main.infoDictionary
@@ -229,7 +233,16 @@ private struct Kopf: View {
     var body: some View {
         HStack(alignment: .top) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Blutdruck-Bericht").font(.system(size: 20, weight: .semibold))
+                HStack(spacing: 6) {
+                    Text("Blutdruck-Bericht").font(.system(size: 20, weight: .semibold))
+                    if beispiel {
+                        Text("BEISPIELDATEN")
+                            .font(.system(size: 7.5, weight: .bold))
+                            .padding(.horizontal, 5).padding(.vertical, 2)
+                            .foregroundStyle(Color.beispielFarbe)
+                            .background(Color.beispielFarbe.opacity(0.14), in: Capsule())
+                    }
+                }
                 Text(zeitraum).font(.system(size: 10)).foregroundStyle(.secondary)
                 Text(einstellung).font(.system(size: 7.5)).foregroundStyle(.secondary)
             }
@@ -283,9 +296,16 @@ private struct Punkt: View {
 }
 
 private struct Fuss: View {
+    var beispiel = false
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Divider()
+            if beispiel {
+                Text("Dieser Bericht beruht auf Beispieldaten. Die Werte sind erfunden "
+                     + "und stammen nicht aus der Health-App.")
+                    .font(.system(size: 7.5, weight: .semibold))
+                    .foregroundStyle(Color.beispielFarbe)
+            }
             Text("Erstellt mit Mein Blutdruck – © \(Calendar.current.component(.year, from: .now).formatted(.number.grouping(.never))) eifelmono. "
                  + "Alle Werte stammen aus der Health-App. Erhöht ab \(Int(grenzeSys))/\(Int(grenzeDia)) mmHg. "
                  + "Kein Medizinprodukt – diese Auswertung diagnostiziert, behandelt oder heilt keine Erkrankung "

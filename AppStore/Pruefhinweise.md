@@ -22,6 +22,10 @@ Auswertung trotzdem vollständig sichtbar ist, gibt es Beispieldaten:
    Alternativ: Zahnrad oben links → Abschnitt „Ausprobieren" →
    „Beispieldaten anzeigen" einschalten.
 
+Solange Beispieldaten angezeigt werden, steht am oberen Rand ein Streifen
+„Beispieldaten – erfundene Werte"; „Beenden" schaltet zurück auf die
+Health-Werte. Auch der PDF-Bericht ist entsprechend gekennzeichnet.
+
 Danach sind alle Ansichten sichtbar: Tagesverlauf über 24 Stunden,
 Tagesabschnitte, Verlauf über alle Tage, Messwertliste und der PDF-Bericht.
 Die Beispieldaten werden in der App erzeugt und sind frei erfunden.
@@ -47,6 +51,10 @@ without any data, use the built-in sample data:
 3. On the empty screen tap "Erst einmal Beispieldaten ansehen"
    (Show sample data first). Alternatively: gear icon, top left →
    section "Ausprobieren" → toggle "Beispieldaten anzeigen".
+
+While sample data is shown, a banner at the top of the screen says
+"Beispieldaten" (sample data); "Beenden" (stop) switches back to Health data.
+The PDF report is marked the same way.
 
 All views then become visible: 24-hour profile, day sections, timeline,
 measurement list and the PDF report. The sample data is generated inside the
