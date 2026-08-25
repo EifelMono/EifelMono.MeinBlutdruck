@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct BlutdruckApp: App {
+struct MeinBlutdruckApp: App {
     @StateObject private var speicher = Speicher()
     @StateObject private var schutz = Schutz()
     @StateObject private var grenzen = Grenzwerte.geteilt
