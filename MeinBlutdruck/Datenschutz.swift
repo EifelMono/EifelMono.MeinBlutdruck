@@ -4,7 +4,7 @@ import SwiftUI
 /// damit sie auch ohne Verbindung lesbar ist.
 enum Datenschutz {
     static let stand = "August 2026"
-    static let adresse = "https://eifelmono.github.io/MeinBlutdruck/datenschutz.html"
+    static let adresse = "https://github.com/EifelMono/EifelMono.MeinBlutdruck/blob/main/DATENSCHUTZ.md"
 
     static let text = """
     **Kurz gesagt:** Diese App sammelt nichts, sendet nichts und hat keine Konten. \

@@ -61,7 +61,7 @@ screen. The app's language is German only.
 ## Kontaktdaten
 
 - Vorname/Nachname: Andreas Klapperich
-- Telefon: (eintragen)
+- Telefon: (eintragen – Pflichtfeld bei den Händlerangaben für die EU)
 - E-Mail: andreas@klapperich.de
 
 ## Anhang

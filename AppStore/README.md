@@ -11,7 +11,9 @@ die brauchen die Anmeldung.
 | Bildschirmfotos 6,9″ (1320 × 2868) | `screenshots-6.9/` – sieben Stück, mit **erfundenen** Werten |
 | Beispieldaten in der App | Einstellungen → „Ausprobieren" → „Beispieldaten anzeigen" |
 | Store-Texte (Name, Untertitel, Beschreibung, Schlüsselbegriffe) | `Store-Texte.md` |
-| Datenschutzerklärung | `datenschutz.html` |
+| Datenschutzerklärung | `../DATENSCHUTZ.md`, in der App unter Einstellungen → Datenschutz |
+| Impressum mit ladungsfähiger Anschrift | `../IMPRESSUM.md` |
+| Bundle-Kennung | `de.klapperich.meinblutdruck` |
 | Antworten zum Datenschutz-Fragebogen | `Datenschutz-Fragebogen.md` |
 | Hinweise für die Prüfung | `Pruefhinweise.md` |
 | `ITSAppUsesNonExemptEncryption = false` | in `MeinBlutdruck/Info.plist` |
@@ -28,7 +30,7 @@ dieselben Zahlen, damit sich die Bilder jederzeit gleich wiederholen lassen.
 ```bash
 xcrun simctl boot 3DEA4EA0-F139-4CD1-909E-936DB7554A31
 xcrun simctl status_bar 3DEA4EA0-F139-4CD1-909E-936DB7554A31 override --time "09:41" --batteryState charged --batteryLevel 100 --cellularBars 4 --wifiBars 3
-xcrun simctl launch 3DEA4EA0-F139-4CD1-909E-936DB7554A31 de.klapperich.blutdruck -Beispieldaten
+xcrun simctl launch 3DEA4EA0-F139-4CD1-909E-936DB7554A31 de.klapperich.meinblutdruck -Beispieldaten
 ```
 
 Die Kennung gehört zum Simulator „iPhone 17 Pro Max"; die Größe 1320 × 2868 ist
@@ -37,32 +39,28 @@ selbst auf, ein zweiter Satz ist nicht nötig.
 
 ## Was noch zu tun ist (mit Entwickler-Konto)
 
-1. **Bundle-Kennung festlegen.**
-   Zurzeit: `de.klapperich.blutdruck`. Sie lässt sich nach dem ersten Hochladen
-   **nicht mehr ändern**. Wer lieber `de.eifelmono.meinblutdruck` hätte, muss das
-   jetzt entscheiden – Änderung in den Ziel-Einstellungen und in
-   `project.pbxproj`.
-
-2. **App-ID anlegen** auf developer.apple.com → Certificates, Identifiers &
+1. **App-ID anlegen** auf developer.apple.com → Certificates, Identifiers &
    Profiles → Identifiers → „+" → App IDs → App.
    Beschreibung „Mein Blutdruck", Bundle ID wie oben, **HealthKit ankreuzen**.
 
-3. **Datenschutzseite veröffentlichen.**
-   `datenschutz.html` z. B. über GitHub Pages erreichbar machen und in der
-   Datei noch die vollständige Anschrift ergänzen.
+2. **Repository öffentlich schalten.**
+   Datenschutzerklärung und Impressum liegen als `DATENSCHUTZ.md` und
+   `IMPRESSUM.md` im Wurzelverzeichnis. Apple prüft die Adresse, sie muss ohne
+   Anmeldung erreichbar sein:
+   <https://github.com/EifelMono/EifelMono.MeinBlutdruck/blob/main/DATENSCHUTZ.md>
 
-4. **App in App Store Connect anlegen.**
+3. **App in App Store Connect anlegen.**
    Meine Apps → „+" → Neue App. Plattform iOS, Name „Mein Blutdruck",
    Primärsprache Deutsch, Bundle ID auswählen, SKU frei wählbar
    (z. B. `meinblutdruck-1`).
 
-5. **Texte und Bilder eintragen** aus `Store-Texte.md` und `screenshots-6.9/`.
+4. **Texte und Bilder eintragen** aus `Store-Texte.md` und `screenshots-6.9/`.
 
-6. **Datenschutz-Fragebogen** nach `Datenschutz-Fragebogen.md` beantworten.
+5. **Datenschutz-Fragebogen** nach `Datenschutz-Fragebogen.md` beantworten.
 
-7. **Altersfreigabe** ausfüllen → ergibt 4+.
+6. **Altersfreigabe** ausfüllen → ergibt 4+.
 
-8. **Hochladen.**
+7. **Hochladen.**
    In Xcode: Produkt → Archivieren, dann im Organizer
    „Distribute App" → „App Store Connect" → „Upload".
    Xcode signiert dabei selbst mit dem Verteilungszertifikat.
@@ -77,11 +75,11 @@ selbst auf, ein zweiter Satz ist nicht nötig.
    Der Export braucht danach eine `ExportOptions.plist` mit `method: app-store-connect`;
    über den Organizer ist es der kürzere Weg.
 
-9. **Prüfhinweise** aus `Pruefhinweise.md` eintragen – ohne sie sieht die
+8. **Prüfhinweise** aus `Pruefhinweise.md` eintragen – ohne sie sieht die
    Prüfung eine leere App und lehnt sie ab. Das ist der häufigste Grund, warum
    Health-Apps abgelehnt werden.
 
-10. **Zur Prüfung einreichen.**
+9. **Zur Prüfung einreichen.**
 
 ## Worauf die Prüfung bei dieser Art App besonders schaut
 

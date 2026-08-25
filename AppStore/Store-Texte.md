@@ -95,7 +95,7 @@ Blutdruck,Hypertonie,Puls,Health,Verlauf,Tagebuch,Auswertung,Messreihe,PDF,Gewic
 ```
 https://github.com/EifelMono/EifelMono.MeinBlutdruck
 ```
-Dort sollte eine kurze Seite oder README mit Kontaktmöglichkeit stehen.
+Die `README.md` dort nennt Funktionsumfang und Kontaktadresse.
 
 ## Marketing-URL (freiwillig)
 
@@ -103,11 +103,13 @@ leer lassen
 
 ## Datenschutz-URL (Pflichtfeld, weil Health-Daten gelesen werden)
 
-Muss eine öffentlich erreichbare Adresse sein, z. B. über GitHub Pages:
+Muss öffentlich und ohne Anmeldung erreichbar sein. Die Erklärung liegt als
+Markdown im Wurzelverzeichnis des Repositorys und wird von GitHub als Seite
+dargestellt:
 ```
-https://eifelmono.github.io/EifelMono.MeinBlutdruck/datenschutz.html
+https://github.com/EifelMono/EifelMono.MeinBlutdruck/blob/main/DATENSCHUTZ.md
 ```
-Vorlage liegt in `AppStore/datenschutz.html`.
+Dazu muss das Repository **öffentlich** sein.
 
 ## Altersfreigabe
 
