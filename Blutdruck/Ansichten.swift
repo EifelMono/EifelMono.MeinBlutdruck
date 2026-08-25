@@ -85,6 +85,10 @@ struct Uebersicht: View {
                         Color.clear.frame(height: 1).id("unten")
                     }
                     .padding(16)
+                    // Ändern sich die Grenzwerte, muss alles neu bewertet werden – die
+                    // Messungen bleiben ja gleich, und ohne diesen Hinweis verwendet
+                    // SwiftUI die Unteransichten unverändert weiter.
+                    .id("grenzen-\(Int(grenzwerte.sys))-\(Int(grenzwerte.dia))")
                 }
                 // Nur der Wahrheitswert, nicht die Position: sonst würde jedes Pixel
                 // beim Blättern die gesamte Ansicht neu aufbauen.
